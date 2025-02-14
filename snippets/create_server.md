@@ -2,6 +2,17 @@
 
 ::: {.cell .markdown}
 
+Before you begin, open this experiment on Trovi:
+
+* Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
+* Then, click “Launch on Chameleon”. This will start a new Jupyter server for you, with the experiment materials already in it.
+
+You will see several notebooks inside the `llm-chi` directory - look for the one titled `1_create_server.ipynb`. Open this notebook and continue there.
+
+:::
+
+::: {.cell .markdown}
+
 ## Bring up a GPU server
 
 At the beginning of the lease time, we will bring up our GPU server. We will use the `python-chi` Python API to Chameleon to provision our server. 
