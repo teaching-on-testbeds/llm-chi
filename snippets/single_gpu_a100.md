@@ -12,6 +12,8 @@ In this section, we will practice strategies for training a large model on a sin
 
 on a large model training job.
 
+This notebook will be executed inside a Jupyter interface **hosted on a GPU server instance on Chameleon**, NOT in the Chameleon Jupyter interface from which we launch experiments (provision servers, etc.) 
+
 :::
 
 
@@ -39,6 +41,17 @@ to get a copy of this notebook in that workspace.
 
 :::
 
+::: {.cell .markdown}
+
+Make sure that you can see the GPUs:
+
+:::
+
+::: {.cell .code}
+```python
+!nvidia-smi
+```
+:::
 
 
 ::: {.cell .markdown}
