@@ -59,7 +59,7 @@ On the "Hosts" tab,
   * in "Resource properties", specify the node type that you identified earlier.
   * Click "Next". Then, click "Create". (We won't include any network resources in this lease.)
   
-Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time, and it will show the name of the physical host that is reserved for you as part of your lease.
+Your lease status should show as "Pending". Click on the lease to see an overview. It will show the start time and end time, and it will show the name of the physical host that is reserved for you as part of your lease. Make sure that the lease details are correct.
 
 
 
