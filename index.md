@@ -334,7 +334,7 @@ We should have already started a notebook server in a container on a Chameleon G
 * Use this button to open the notebook in Colab: <a target="_blank" href="https://colab.research.google.com/github/teaching-on-testbeds/llm-chi/blob/main/workspace/2_single_gpu_a100.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
-* Click "File > Save a Copy in Drive" to save it in your own Google Drive.
+* Click "File > Save a Copy in Drive" to save it in your own Google Drive. Work in your copy, so that the outputs will be saved automatically.
 * Next to the "Connect" button in the top right, there is a &#9660; symbol. Click on this symbol to expand the menu, and choose "Connect to a local runtime".
 * Paste the `http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` you copied earlier into this space, and choose "Connect".
 
