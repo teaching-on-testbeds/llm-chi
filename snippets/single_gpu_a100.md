@@ -92,9 +92,19 @@ then, download the foundation models:
 ::: {.cell .markdown}
 
 
-We have attached a bind mount to this workspace that already includes a few "recipes" for fine-tuning. Using the file browser on the left side, look at the contents of the "config" directory.
+Also, get the "recipes" that we will use for LLM fine-tuning. Using the file browser on the left side, look at the contents of the "config" directory.
 
 :::
+
+
+::: {.cell .code}
+```python
+!git clone https://github.com/teaching-on-testbeds/llm-chi/
+!mv llm-chi/workspace/config .
+```
+:::
+
+
 
 ::: {.cell .markdown}
 

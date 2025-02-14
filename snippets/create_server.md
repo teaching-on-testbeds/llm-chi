@@ -195,7 +195,7 @@ and get it running:
 
 ::: {.cell .code}
 ```python
-s.execute("docker run -d -p 8888:8888 --gpus all -v /home/cc/llm-chi/workspace:/workspace --name torchnb quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
+s.execute("docker run -d -p 8888:8888 --gpus all --name torchnb quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
 ```
 :::
 

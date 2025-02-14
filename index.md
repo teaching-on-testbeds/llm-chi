@@ -242,7 +242,7 @@ and get it running:
 
 
 ```python
-s.execute("docker run -d -p 8888:8888 --gpus all -v /home/cc/llm-chi/workspace:/workspace --name torchnb quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
+s.execute("docker run -d -p 8888:8888 --gpus all --name torchnb quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
 ```
 
 
@@ -386,7 +386,15 @@ then, download the foundation models:
 
 
 
-We have attached a bind mount to this workspace that already includes a few "recipes" for fine-tuning. Using the file browser on the left side, look at the contents of the "config" directory.
+Also, get the "recipes" that we will use for LLM fine-tuning. Using the file browser on the left side, look at the contents of the "config" directory.
+
+
+
+```python
+!git clone https://github.com/teaching-on-testbeds/llm-chi/
+!mv llm-chi/workspace/config .
+```
+
 
 
 
