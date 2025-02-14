@@ -398,7 +398,7 @@ Also, get the "recipes" that we will use for LLM fine-tuning. Using the file bro
 
 
 
-### Baseline
+### Experiment: Baseline
 
 As a baseline, let's try an epoch of fine-tuning the TinyLlama-1.1B, using full precision and a batch size of 32:
 
@@ -414,7 +414,7 @@ This will fail because the training job won't fit in our 80GB GPU memory.
 
 
 
-### Reduced batch size
+### Experiment: Reduced batch size
 
 But with a smaller batch size, it fits easily:
 
@@ -429,7 +429,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Gradient accumulation
+### Experiment: Gradient accumulation
 
 By using gradient accumulation to "step" only after a few "micro batches", we can train with a larger effective "global" batch size, with minimal effect on the memory required:
 
@@ -444,7 +444,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Reduced precision
+### Experiment: Reduced precision
 
 With a "brain float16" format for numbers, instead of "float32", we can further reduce the memory required, although this representation is less precise:
 
@@ -463,7 +463,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Mixed precision
+### Experiment: Mixed precision
 
 With mixed precision, we get back some of the lost precision in the results, at the cost of some additional memory and time:
 
@@ -478,7 +478,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Larger model - 3b
+### Experiment: Larger model - 3b
 
 We've gained so much GPU memory back with these techniques, we can even train a larger model. Let's switch from the 1.1B to the 3B model:
 
@@ -492,7 +492,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Larger model - 7b
+### Experiment: Larger model - 7b
 
 If we reduce the batch size again, we can even train a 7b model:
 
@@ -508,7 +508,7 @@ Make a note of the training time and memory, which is printed at the end of the 
 
 
 
-### Larger model - 13b
+### Experiment: Larger model - 13b
 
 Even with the smallest possible batch size, we can't train a 13B model:
 
@@ -529,7 +529,7 @@ this will fail with an "out of memory" error. But, if we switch from the Adam op
 
 
 
-### Parameter efficient fine tuning
+### Experiment: Parameter efficient fine tuning
 
 If we are only fine-tuning, not training a model from scratch, we can also consider LoRA and QLoRA. Let's try it first with our 1.1B model:
 
