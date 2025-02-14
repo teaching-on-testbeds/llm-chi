@@ -21,7 +21,7 @@ on a large model training job.
 
 We should have already started a notebook server in a container on a Chameleon GPU host, and set up an SSH tunnel to this notebook server. Now, we will open this notebook in Google Colab and connect it to the runtime that you have in Chameleon. This is a convenient way to work, because the notebook and its outputs will be saved automatically in your Google Drive.
 
-* Use this button to open the notebook in Colab: <a target="_blank" href="https://colab.research.google.com/github/teaching-on-testbeds/llm-chi/blob/main/workspace/2_single_gpu_a100">
+* Use this button to open the notebook in Colab: <a target="_blank" href="https://colab.research.google.com/github/teaching-on-testbeds/llm-chi/blob/main/workspace/2_single_gpu_a100.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 * Click "File > Save a Copy in Drive" to save it in your own Google Drive.
