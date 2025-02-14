@@ -28,7 +28,14 @@ We should have already started a notebook server in a container on a Chameleon G
 * Next to the "Connect" button in the top right, there is a &#9660; symbol. Click on this symbol to expand the menu, and choose "Connect to a local runtime".
 * Paste the `http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` you copied earlier into this space, and choose "Connect".
 
-Alternatively, if you prefer not to use Colab (or can't, for some reason): just put the URL you copied earlier into your browser to open the Jupyter interface directly.
+**Alternatively, if you prefer not to use Colab** (or can't, for some reason): just put the  `http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` URL you copied earlier into your browser to open the Jupyter interface directly. But, then you'll have to open a terminal in that Jupyter interface and run
+
+```
+wget https://raw.githubusercontent.com/teaching-on-testbeds/llm-chi/refs/heads/main/workspace/2_single_gpu_a100.ipynb
+```
+
+to get a copy of this notebook in that workspace.
+
 
 :::
 
