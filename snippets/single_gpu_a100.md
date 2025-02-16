@@ -60,6 +60,8 @@ Make sure that you can see the GPUs:
 
 For this tutorial, we will fine-tune an [TinyLlama](https://arxiv.org/abs/2401.02385) or [OpenLLaMA](https://github.com/openlm-research/open_llama) large language model using [`litgpt`](https://github.com/Lightning-AI/litgpt). LitGPT is a convenient wrapper around many PyTorch Lightning capabilities that makes it easy to fine-tune a GPU using a "recipe" defined in a YAML file. (We'll also try the Python API for LitGPT in the "Multiple GPU" section of this tutorial.)
 
+You may browse the "recipes" for this experiment [in our Github repository](https://github.com/teaching-on-testbeds/llm-chi/tree/main/workspace/config).
+
 Our focus will be exclusively on comparing the time and memory requirements of training jobs under different settings - we will completely ignore the loss of the fine-tuned model, and we will make some choices to reduce the overall time of our experiment (to fit in a short Chameleon lease) that wouldn't make sense if we really needed the fine-tuned model (e.g. using a very small fraction of the training data).
 
 First, install LitGPT:

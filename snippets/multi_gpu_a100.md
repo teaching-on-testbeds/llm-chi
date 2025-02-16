@@ -13,6 +13,9 @@ After completing this section, you should understand the effect of
 
 on a large model training job.
 
+You may view the Python code we will execute in this experiment [in our Github repository](https://github.com/teaching-on-testbeds/llm-chi/tree/main/torch).
+
+
 You will execute the commands in this section either inside an SSH session on the Chameleon "node-llm" server, or inside a container that runs on this server. You will need **two** terminals arranged side-by-side or vertically, and in both terminals, use SSH to connect to the "node-llm" server.
 
 :::
@@ -100,7 +103,7 @@ and leave it running throughout all the experiments in this section.
 
 We previously noted that we can train an OpenLLaMA 7b model on a single A100 80GB GPU with bf16 precision and batch size 4, and that this setting would essentially max out the available GPU memory on the A100 80GB.
 
-Inside the container, we'll repeat this test (using the Python API for `litgpt` instead of its command line interface) (and, we won't use gradient accumulation this time):
+Now, we'll repeat this test using the Python API for `litgpt` instead of its command line interface (and, we won't use gradient accumulation this time). You may view [a100_llama7b_1device.py](https://github.com/teaching-on-testbeds/llm-chi/blob/main/torch/a100_llama7b_1device.py) in our Github repository. Run it inside the container with:
 
 ```bash
 # run inside pytorch container
@@ -138,7 +141,7 @@ Epoch 0: 100%|██████████████████████
 ### Experiment: OpenLLaMA 7b model on 4x A100 80GB with DDP
 
 
-Now, we'll repeat the same experiment with DDP across 4 GPUs! Inside the container, run
+Now, we'll repeat the same experiment with DDP across 4 GPUs!  You may view [a100_llama7b_4ddp.py](https://github.com/teaching-on-testbeds/llm-chi/blob/main/torch/a100_llama7b_4ddp.py) in our Github repository. Inside the container, run
 
 ```bash
 # run inside pytorch container
@@ -187,6 +190,8 @@ Epoch 0: 100%|██████████████████████
 
 With DDP, we have a larger effective batch size (since 4 GPUs process a batch in parallel), but no memory savings. With FSDP, we can shard optimizer state, gradients, and parameters across GPUs, to also reduce the memory required.
 
+You may view [a100_llama7b_4fsdp.py](https://github.com/teaching-on-testbeds/llm-chi/blob/main/torch/a100_llama7b_4fsdp.py) in our Github repository. 
+
 Inside the container, run:
 
 
@@ -233,6 +238,9 @@ Epoch 0: 100%|██████████████████████
 
 Because of the memory savings achieved by FSDP, we can increase the batch size (and potentially achieve faster training times) without running out of memory. 
 
+You may view [a100_llama7b_4fsdp_8batch.py](https://github.com/teaching-on-testbeds/llm-chi/blob/main/torch/a100_llama7b_4fsdp_8batch.py) in our Github repository. 
+
+
 Inside the container, run:
 
 
@@ -274,6 +282,8 @@ Finally, as an optional experiment, we can try training a much bigger model - th
 
 * sharding parameters and gradients across GPUs, as before
 * and offloading the optimizer state to CPU
+
+You may view [a100_llama13b_deepspeed.py](https://github.com/teaching-on-testbeds/llm-chi/blob/main/torch/a100_llama13b_deepspeed.py) in our Github repository. 
 
 
 For this experiment, we'll install `deepspeed`:
