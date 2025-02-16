@@ -9,8 +9,8 @@ Follow along at [Large-scale model training on Chameleon](https://teaching-on-te
 
 Note: this tutorial requires advance reservation of specific hardware! Either:
 
-* one node with 4x A100 80GB: `gpu_a100_pcie`or `gpu_a100_nvlink` at CHI@UC for a 3-hour block, or
-* a 2-hour block on a node with 4x A100 80GB or 4x V100: `gpu_a100_pcie`, `gpu_a100_nvlink`,` gpu_v100` AND a 2-hour block on a node with 1x A100 80GB: `compute_gigaio` at CHI@UC
+* one node with 4x A100 80GB: `gpu_a100_pcie` at CHI@UC for a 3-hour block, or
+* a 2-hour block on a node with 4x A100 80GB or 4x V100: `gpu_a100_pcie` or `gpu_v100` AND a 2-hour block on a node with 1x A100 80GB: `compute_gigaio` at CHI@UC
 
 ---
 
