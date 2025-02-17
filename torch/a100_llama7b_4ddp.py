@@ -43,7 +43,7 @@ data.connect(lit_model.llm.tokenizer, batch_size=batch_size, max_seq_length=512)
 
 trainer = L.Trainer(
     devices=4,
-    strategy=FSDPStrategy(sharding_strategy='FULL_SHARD'),
+    strategy=DDPStrategy(),
     accelerator="gpu",
     max_epochs=1,
     precision="bf16-true",
