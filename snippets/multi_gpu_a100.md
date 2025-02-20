@@ -6,6 +6,9 @@
 
 In this section, we will practice strategies for training a large model using distributed processes across multiple GPUs. This section requires a host with 4x A100 80GB GPUs.
 
+> **Note**: If you have reserved a 4x V100 GPU instance, skip to the V100 section!
+
+
 After completing this section, you should understand the effect of
 
 * distributed data parallelism

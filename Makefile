@@ -1,13 +1,14 @@
-all: index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb
+all: index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb 3_multi_gpu_v100.ipynb
 
 clean: 
-	rm index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb workspace/2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb
+	rm index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb workspace/2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb 3_multi_gpu_v100.ipynb
 
 index.md: snippets/*.md 
 	cat snippets/intro.md \
 		snippets/create_server.md \
 		snippets/single_gpu_a100.md \
 		snippets/multi_gpu_a100.md \
+		snippets/multi_gpu_v100.md \
 		> index.tmp.md
 	grep -v '^:::' index.tmp.md > index.md
 	rm index.tmp.md
@@ -38,6 +39,12 @@ index.md: snippets/*.md
                 -i snippets/frontmatter_python.md snippets/multi_gpu_a100.md \
                 -o 3_multi_gpu_a100.ipynb  
 	sed -i 's/attachment://g' 3_multi_gpu_a100.ipynb
+
+3_multi_gpu_v100.ipynb: snippets/multi_gpu_v100.md
+	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
+                -i snippets/frontmatter_python.md snippets/multi_gpu_v100.md \
+                -o 3_multi_gpu_v100.ipynb  
+	sed -i 's/attachment://g' 3_multi_gpu_v100.ipynb
 
 
 

@@ -1,7 +1,7 @@
 
 ::: {.cell .markdown}
 
-## Train a large model on a single GPU
+## Train a large model on a single GPU - A100 80GB
 
 In this section, we will practice strategies for training a large model on a single GPU. After completing this section, you should understand the effect of
 
@@ -11,6 +11,8 @@ In this section, we will practice strategies for training a large model on a sin
 * parameter efficient fine tuning
 
 on a large model training job.
+
+This section requires a host with at least one A100 80GB GPUs.
 
 This notebook will be executed inside a Jupyter interface **hosted on a GPU server instance on Chameleon**, NOT in the Chameleon Jupyter interface from which we launch experiments (provision servers, etc.) 
 
