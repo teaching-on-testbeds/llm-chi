@@ -224,7 +224,7 @@ s.execute("sudo systemctl restart docker")
 
 
 
-In the following cell, we will verify that we can see our NVIDIA GPUs from inside a container, by passing `--gpus-all`. (The `-rm` flag says to clean up the container and remove its filesystem when it finishes running.)
+In the following cell, we will verify that we can see our NVIDIA GPUs from inside a container, by passing `--gpus all`. (The `-rm` flag says to clean up the container and remove its filesystem when it finishes running.)
 
 
 
