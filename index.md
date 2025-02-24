@@ -173,6 +173,10 @@ s.refresh()
 s.check_connectivity()
 ```
 
+
+In the output below, make a note of the floating IP that has been assigned to your instance (in the "Addresses" row).
+
+
 ```python
 s.refresh()
 s.show(type="widget")
