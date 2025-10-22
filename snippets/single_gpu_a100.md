@@ -23,16 +23,9 @@ This notebook will be executed inside a Jupyter interface **hosted on a GPU serv
 
 ### Open the notebook on Colab
 
-We should have already started a notebook server in a container on a Chameleon GPU host, and set up an SSH tunnel to this notebook server. Now, we will open this notebook in Google Colab and connect it to the runtime that you have in Chameleon. This is a convenient way to work, because the notebook and its outputs will be saved automatically in your Google Drive.
+We should have already started a notebook server in a container on a Chameleon GPU host.
 
-* Use this button to open the notebook in Colab: <a target="_blank" href="https://colab.research.google.com/github/teaching-on-testbeds/llm-chi/blob/main/workspace/2_single_gpu_a100.ipynb">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
-* Click "File > Save a Copy in Drive" to save it in your own Google Drive. Work in your copy, so that the outputs will be saved automatically.
-* Next to the "Connect" button in the top right, there is a &#9660; symbol. Click on this symbol to expand the menu, and choose "Connect to a local runtime".
-* Paste the `http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` you copied earlier into this space, and choose "Connect".
-
-**Alternatively, if you prefer not to use Colab** (or can't, for some reason): just put the  `http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` URL you copied earlier into your browser to open the Jupyter interface directly. But, then you'll have to open a terminal in that Jupyter interface and run
+Open a terminal in that Jupyter interface and run
 
 ```
 wget https://raw.githubusercontent.com/teaching-on-testbeds/llm-chi/refs/heads/main/workspace/2_single_gpu_a100.ipynb

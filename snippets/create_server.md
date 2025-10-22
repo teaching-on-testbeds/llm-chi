@@ -162,6 +162,8 @@ s.execute("curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo
 s.execute("sudo apt update")
 s.execute("sudo apt-get install -y nvidia-container-toolkit")
 s.execute("sudo nvidia-ctk runtime configure --runtime=docker")
+# for https://github.com/NVIDIA/nvidia-container-toolkit/issues/48
+s.execute("sudo jq 'if has(\"exec-opts\") then . else . + {\"exec-opts\": [\"native.cgroupdriver=cgroupfs\"]} end' /etc/docker/daemon.json | sudo tee /etc/docker/daemon.json.tmp > /dev/null && sudo mv /etc/docker/daemon.json.tmp /etc/docker/daemon.json")
 s.execute("sudo systemctl restart docker")
 ```
 :::
@@ -212,31 +214,10 @@ and get it running:
 
 ::: {.cell .code}
 ```python
-s.execute("docker run -d -p 8888:8888 --gpus all --name torchnb quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
+s.execute("docker run -d -p 8888:8888 --gpus all --name jupyter quay.io/jupyter/pytorch-notebook:cuda12-pytorch-2.5.1")
 ```
 :::
 
-
-::: {.cell .markdown}
-
-There's one more thing we must do before we can start out Jupyter server. Rather than expose the Jupyter server to the Internet, we are going to set up an SSH tunnel from our local terminal to our server, and access the service through that tunnel. 
-
-Here's how it works: In your *local* terminal, run
-
-```
-ssh -L 8888:127.0.0.1:8888 -i ~/.ssh/id_rsa_chameleon cc@A.B.C.D
-```
-
-where, 
-
-* instead of `~/.ssh/id_rsa_chameleon`, substitute the path to your key
-* and instead of `A.B.C.D`, substitute the floating IP associated with your server
-
-This will configure the SSH session so that when you connect to port 8888 locally, it will be forwarded over the SSH tunnel to port 8888 on the host at the other end of the SSH connection.
-
-SSH tunneling is a convenient way to access services on a remote machine when you don't necessarily want to expose those services to the Internet (for example: if they are not secured from unauthorized access).
-
-:::
 
 ::: {.cell .markdown}
 
@@ -246,7 +227,7 @@ Finally, run
 
 ::: {.cell .code}
 ```python
-s.execute("docker logs torchnb")
+s.execute("docker logs jupyter")
 ```
 :::
 
@@ -258,7 +239,7 @@ Look for the line of output in the form:
 http://127.0.0.1:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-and copy it for use in the next section.
+Paste this into a browser tab, but in place of `127.0.0.1`, substitute the floating IP assigned to your instance, to open the Jupyter notebook interface.
 
 :::
 
