@@ -19,7 +19,7 @@ In this experiment, we will deploy a single instance with a GPU. We have "tuned"
 
 (Generally, to find a Chameleon node with a specific GPU type, we can use the Chameleon [Hardware Browser](https://chameleoncloud.org/hardware/). )
 
-You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100.md](index_h100.md).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 ## Create a lease
 

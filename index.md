@@ -10,7 +10,7 @@ You’ll be fine-tuning a [BLIP-2](https://arxiv.org/abs/2301.12597) model - a v
 
 BLIP-2 is available with different underlying language models of varying sizes and capabilities, such as FlanT5 (XL and XXL variants) or OPT (2.7B and 6.7B variants). Larger versions generally produce more fluent and detailed captions, but require more computational resources. Because of that, you’ll need to use some special training strategies to handle models at this scale efficiently.
 
-You’ll fine-tune your model using a dataset or GourmetGram images that have user-contributed captions.
+You’ll fine-tune your model using a dataset of GourmetGram images that have user-contributed captions.
 
 This exercise has two parts:
 
@@ -39,7 +39,7 @@ In this experiment, we will deploy a single instance with a GPU. We have "tuned"
 
 (Generally, to find a Chameleon node with a specific GPU type, we can use the Chameleon [Hardware Browser](https://chameleoncloud.org/hardware/). )
 
-You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100.md](index_h100.md).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 ## Create a lease
 
@@ -777,7 +777,7 @@ After updating the config and saving the script, run the following cell, and als
 python fine-tune-blip-lora.py
 ```
 
-The memory required is *shockingly* small! Earlier, we saw that full fine-tuning went OOM on this model in this configuration, but now we can fit it easily. Although the base model weights are still loaded (they are used in the forward/backward pass), there is only a small number of trainable parameters (just the adapter weights), so the gradients are much smaller and the optimizer state is much smaller.
+The memory required is much smaller! Earlier, we saw that full fine-tuning went OOM on this model in this configuration, but now we can fit it easily. Although the base model weights are still loaded (they are used in the forward/backward pass), there is only a small number of trainable parameters (just the adapter weights), so the gradients are much smaller and the optimizer state is much smaller.
 
 We can also further reduce the memory required by quantizing the base model weights:
 
@@ -857,11 +857,11 @@ In this experiment, we will deploy a single instance with four GPUs. We have "tu
 
 
 
-You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100.md](index_h100.md).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 
 
-You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100.md](index_a100.md).
+You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100](index_a100).
 
 
 

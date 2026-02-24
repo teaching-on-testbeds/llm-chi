@@ -1,12 +1,7 @@
-all: index.md advance_reserve.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/3_multi_gpu.ipynb
+all: index.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/3_multi_gpu.ipynb
 
 clean: 
-	rm index.md advance_reserve.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/3_multi_gpu.ipynb
-
-advance_reserve.md: snippets/intro.md snippets/reserve.md
-	cat snippets/intro.md snippets/reserve.md > advance_reserve.tmp.md
-	grep -v '^:::' advance_reserve.tmp.md > advance_reserve.md
-	rm advance_reserve.tmp.md
+	rm index.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/3_multi_gpu.ipynb
 
 index.md: snippets/*.md 
 	cat snippets/intro.md \

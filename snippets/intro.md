@@ -10,7 +10,7 @@ You’ll be fine-tuning a [BLIP-2](https://arxiv.org/abs/2301.12597) model - a v
 
 BLIP-2 is available with different underlying language models of varying sizes and capabilities, such as FlanT5 (XL and XXL variants) or OPT (2.7B and 6.7B variants). Larger versions generally produce more fluent and detailed captions, but require more computational resources. Because of that, you’ll need to use some special training strategies to handle models at this scale efficiently.
 
-You’ll fine-tune your model using a dataset or GourmetGram images that have user-contributed captions.
+You’ll fine-tune your model using a dataset of GourmetGram images that have user-contributed captions.
 
 This exercise has two parts:
 

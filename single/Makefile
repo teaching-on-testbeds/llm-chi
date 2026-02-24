@@ -4,7 +4,6 @@ FILTER := filters/gpu_select.lua
 INDEX_OUT := index.md
 INDEX_A100_OUT := index_a100.md
 INDEX_H100_OUT := index_h100.md
-ADVANCE_RESERVE_OUT := advance_reserve.md
 INTRO_OUT := 0_intro.ipynb
 RESERVE_OUT := 1_reserve.ipynb
 CREATE_OUT := 2_create_server.ipynb
@@ -14,7 +13,7 @@ SINGLE_WORKSPACE_OUT := workspace/2_single_gpu.ipynb
 
 all: build
 
-build: validate-gpu $(INDEX_A100_OUT) $(INDEX_H100_OUT) $(INDEX_OUT) $(ADVANCE_RESERVE_OUT) $(INTRO_OUT) $(RESERVE_OUT) $(CREATE_OUT) $(SINGLE_WORKSPACE_OUT)
+build: validate-gpu $(INDEX_A100_OUT) $(INDEX_H100_OUT) $(INDEX_OUT) $(INTRO_OUT) $(RESERVE_OUT) $(CREATE_OUT) $(SINGLE_WORKSPACE_OUT)
 
 a100:
 	$(MAKE) build GPU=a100
@@ -55,13 +54,6 @@ $(INDEX_H100_OUT): snippets/intro.md snippets/reserve.md snippets/create_server.
 $(INDEX_OUT): $(INDEX_A100_OUT) $(INDEX_H100_OUT)
 	cp index_$(GPU).md $(INDEX_OUT)
 
-$(ADVANCE_RESERVE_OUT): snippets/intro.md snippets/reserve.md $(FILTER)
-	cat snippets/intro.md snippets/reserve.md > advance_reserve.tmp.md
-	GPU=$(GPU) pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
-		-o advance_reserve.filtered.md advance_reserve.tmp.md
-	grep -v '^:::' advance_reserve.filtered.md > $(ADVANCE_RESERVE_OUT)
-	rm advance_reserve.tmp.md advance_reserve.filtered.md
-
 $(INTRO_OUT): snippets/frontmatter_python.md snippets/intro.md $(FILTER)
 	GPU=$(GPU) pandoc --resource-path=../ --embed-resources --standalone --wrap=none --lua-filter $(FILTER) \
 		-i snippets/frontmatter_python.md snippets/intro.md \
@@ -87,4 +79,4 @@ $(SINGLE_WORKSPACE_OUT): snippets/frontmatter_bash.md snippets/single_gpu.md $(F
 	sed -i 's/attachment://g' $(SINGLE_WORKSPACE_OUT)
 
 clean:
-	rm -f index.md index_a100.md index_h100.md advance_reserve.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/2_single_gpu.ipynb
+	rm -f index.md index_a100.md index_h100.md 0_intro.ipynb 1_reserve.ipynb 2_create_server.ipynb workspace/2_single_gpu.ipynb

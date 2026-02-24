@@ -28,11 +28,11 @@ In this experiment, we will deploy a single instance with four GPUs. We have "tu
 
 
 
-You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100.md](index_h100.md).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 
 
-You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100.md](index_a100.md).
+You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100](index_a100).
 
 
 
