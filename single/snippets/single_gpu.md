@@ -210,28 +210,58 @@ For every experiment in this notebook, we will follow the same run loop:
 
 For quick reference, this table summarizes the configuration used in each full fine-tuning experiment.
 
-| Experiment | Model | bs/acc | precision | optim | act_ckpt | strategy | max_steps | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | `blip2-opt-2.7b` | `32/1` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, expected OOM |
-| Reduced batch size | `blip2-opt-2.7b` | `16/1` | `32-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Gradient accumulation | `blip2-opt-2.7b` | `16/4` | `32-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Grad accum + LR x4 rerun | `blip2-opt-2.7b` | `16/4` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=2e-5` |
-| Reduced precision | `blip2-opt-2.7b` | `16/4` | `bf16-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Mixed precision | `blip2-opt-2.7b` | `16/4` | `bf16-mixed` | `adamw` | `False` | `auto` | `-1` |  |
-| Larger model | `blip2-opt-6.7b` | `16/4` | `bf16-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Even larger model | `blip2-flan-t5-xxl` | `16/4` | `bf16-true` | `adamw` | `False` | `auto` | `-1` | expected OOM |
-| XXL + smallest batch | `blip2-flan-t5-xxl` | `1/1` | `bf16-true` | `adamw` | `False` | `auto` | `-1` | expected OOM |
-| Optimizer without state | `blip2-flan-t5-xxl` | `16/4` | `bf16-true` | `sgd` | `False` | `auto` | `-1` |  |
-| 8-bit optimizer | `blip2-flan-t5-xxl` | `2/2` | `bf16-true` | `adam_8bit` | `False` | `auto` | `-1` |  |
-| Activation checkpointing | `blip2-flan-t5-xxl` | `2/2` | `bf16-true` | `adam_8bit` | `True` | `auto` | `-1` |  |
-| CPU offload (DeepSpeed) | `blip2-flan-t5-xxl` | `16/4` | `bf16-true` | `deepspeed_cpu` | `False` | `deepspeed_stage_2_offload` | `2` |  |
+<table>
+  <thead>
+    <tr>
+      <th>Experiment</th>
+      <th>Model</th>
+      <th>bs/acc</th>
+      <th>precision</th>
+      <th>optim</th>
+      <th>act_ckpt</th>
+      <th>strategy</th>
+      <th>max_steps</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Baseline</td><td><code>blip2-opt-2.7b</code></td><td><code>32/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, expected OOM</td></tr>
+    <tr><td>Reduced batch size</td><td><code>blip2-opt-2.7b</code></td><td><code>16/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Gradient accumulation</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Grad accum + LR x4 rerun</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=2e-5</code></td></tr>
+    <tr><td>Reduced precision</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Mixed precision</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>bf16-mixed</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Larger model</td><td><code>blip2-opt-6.7b</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Even larger model</td><td><code>blip2-flan-t5-xxl</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td>expected OOM</td></tr>
+    <tr><td>XXL + smallest batch</td><td><code>blip2-flan-t5-xxl</code></td><td><code>1/1</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td>expected OOM</td></tr>
+    <tr><td>Optimizer without state</td><td><code>blip2-flan-t5-xxl</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>sgd</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>8-bit optimizer</td><td><code>blip2-flan-t5-xxl</code></td><td><code>2/2</code></td><td><code>bf16-true</code></td><td><code>adam_8bit</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Activation checkpointing</td><td><code>blip2-flan-t5-xxl</code></td><td><code>2/2</code></td><td><code>bf16-true</code></td><td><code>adam_8bit</code></td><td><code>True</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>CPU offload (DeepSpeed)</td><td><code>blip2-flan-t5-xxl</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>deepspeed_cpu</code></td><td><code>False</code></td><td><code>deepspeed_stage_2_offload</code></td><td><code>2</code></td><td></td></tr>
+  </tbody>
+</table>
 
 And this table summarizes the PEFT experiments.
 
-| Experiment | Model | bs/acc | precision | optim | act_ckpt | strategy | max_steps | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| LoRA | `blip2-flan-t5-xxl` | `32/2` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, `use_lora=True`, `use_qlora=False` |
-| QLoRA | `blip2-flan-t5-xxl` | `64/1` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, `use_lora=False`, `use_qlora=True` |
+<table>
+  <thead>
+    <tr>
+      <th>Experiment</th>
+      <th>Model</th>
+      <th>bs/acc</th>
+      <th>precision</th>
+      <th>optim</th>
+      <th>act_ckpt</th>
+      <th>strategy</th>
+      <th>max_steps</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>LoRA</td><td><code>blip2-flan-t5-xxl</code></td><td><code>32/2</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, <code>use_lora=True</code>, <code>use_qlora=False</code></td></tr>
+    <tr><td>QLoRA</td><td><code>blip2-flan-t5-xxl</code></td><td><code>64/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, <code>use_lora=False</code>, <code>use_qlora=True</code></td></tr>
+  </tbody>
+</table>
 
 :::
 
@@ -240,28 +270,58 @@ And this table summarizes the PEFT experiments.
 
 For quick reference, this table summarizes the configuration used in each full fine-tuning experiment.
 
-| Experiment | Model | bs/acc | precision | optim | act_ckpt | strategy | max_steps | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | `blip2-opt-2.7b` | `64/1` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, OOM |
-| Reduced batch size | `blip2-opt-2.7b` | `16/1` | `32-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Gradient accumulation | `blip2-opt-2.7b` | `16/4` | `32-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Grad accum + LR x4 rerun | `blip2-opt-2.7b` | `16/4` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=2e-5` |
-| Reduced precision | `blip2-opt-2.7b` | `16/4` | `bf16-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Mixed precision | `blip2-opt-2.7b` | `16/4` | `bf16-mixed` | `adamw` | `False` | `auto` | `-1` |  |
-| Larger model | `blip2-opt-6.7b` | `32/2` | `bf16-true` | `adamw` | `False` | `auto` | `-1` |  |
-| Even larger model | `blip2-flan-t5-xxl` | `32/2` | `bf16-true` | `adamw` | `False` | `auto` | `-1` | OOM |
-| XXL + smallest batch | `blip2-flan-t5-xxl` | `1/1` | `bf16-true` | `adamw` | `False` | `auto` | `-1` | OOM |
-| Optimizer without state | `blip2-flan-t5-xxl` | `32/2` | `bf16-true` | `sgd` | `False` | `auto` | `-1` |  |
-| 8-bit optimizer | `blip2-flan-t5-xxl` | `2/2` | `bf16-true` | `adam_8bit` | `False` | `auto` | `-1` |  |
-| Activation checkpointing | `blip2-flan-t5-xxl` | `2/2` | `bf16-true` | `adam_8bit` | `True` | `auto` | `-1` |  |
-| CPU offload (DeepSpeed) | `blip2-flan-t5-xxl` | `32/2` | `bf16-true` | `deepspeed_cpu` | `False` | `deepspeed_stage_2_offload` | `2` |  |
+<table>
+  <thead>
+    <tr>
+      <th>Experiment</th>
+      <th>Model</th>
+      <th>bs/acc</th>
+      <th>precision</th>
+      <th>optim</th>
+      <th>act_ckpt</th>
+      <th>strategy</th>
+      <th>max_steps</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Baseline</td><td><code>blip2-opt-2.7b</code></td><td><code>64/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, OOM</td></tr>
+    <tr><td>Reduced batch size</td><td><code>blip2-opt-2.7b</code></td><td><code>16/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Gradient accumulation</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Grad accum + LR x4 rerun</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=2e-5</code></td></tr>
+    <tr><td>Reduced precision</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Mixed precision</td><td><code>blip2-opt-2.7b</code></td><td><code>16/4</code></td><td><code>bf16-mixed</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Larger model</td><td><code>blip2-opt-6.7b</code></td><td><code>32/2</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Even larger model</td><td><code>blip2-flan-t5-xxl</code></td><td><code>32/2</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td>OOM</td></tr>
+    <tr><td>XXL + smallest batch</td><td><code>blip2-flan-t5-xxl</code></td><td><code>1/1</code></td><td><code>bf16-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td>OOM</td></tr>
+    <tr><td>Optimizer without state</td><td><code>blip2-flan-t5-xxl</code></td><td><code>32/2</code></td><td><code>bf16-true</code></td><td><code>sgd</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>8-bit optimizer</td><td><code>blip2-flan-t5-xxl</code></td><td><code>2/2</code></td><td><code>bf16-true</code></td><td><code>adam_8bit</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>Activation checkpointing</td><td><code>blip2-flan-t5-xxl</code></td><td><code>2/2</code></td><td><code>bf16-true</code></td><td><code>adam_8bit</code></td><td><code>True</code></td><td><code>auto</code></td><td><code>-1</code></td><td></td></tr>
+    <tr><td>CPU offload (DeepSpeed)</td><td><code>blip2-flan-t5-xxl</code></td><td><code>32/2</code></td><td><code>bf16-true</code></td><td><code>deepspeed_cpu</code></td><td><code>False</code></td><td><code>deepspeed_stage_2_offload</code></td><td><code>2</code></td><td></td></tr>
+  </tbody>
+</table>
 
 And this table summarizes the PEFT experiments.
 
-| Experiment | Model | bs/acc | precision | optim | act_ckpt | strategy | max_steps | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| LoRA | `blip2-flan-t5-xxl` | `32/2` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, `use_lora=True`, `use_qlora=False` |
-| QLoRA | `blip2-flan-t5-xxl` | `64/1` | `32-true` | `adamw` | `False` | `auto` | `-1` | `lr=5e-6`, `num_train_samples=512`, `use_lora=False`, `use_qlora=True` |
+<table>
+  <thead>
+    <tr>
+      <th>Experiment</th>
+      <th>Model</th>
+      <th>bs/acc</th>
+      <th>precision</th>
+      <th>optim</th>
+      <th>act_ckpt</th>
+      <th>strategy</th>
+      <th>max_steps</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>LoRA</td><td><code>blip2-flan-t5-xxl</code></td><td><code>32/2</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, <code>use_lora=True</code>, <code>use_qlora=False</code></td></tr>
+    <tr><td>QLoRA</td><td><code>blip2-flan-t5-xxl</code></td><td><code>64/1</code></td><td><code>32-true</code></td><td><code>adamw</code></td><td><code>False</code></td><td><code>auto</code></td><td><code>-1</code></td><td><code>lr=5e-6</code>, <code>num_train_samples=512</code>, <code>use_lora=False</code>, <code>use_qlora=True</code></td></tr>
+  </tbody>
+</table>
 
 
 :::

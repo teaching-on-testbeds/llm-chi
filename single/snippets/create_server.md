@@ -2,8 +2,23 @@
 
 Before you begin, open this experiment on Trovi:
 
+:::
+
+::: {.cell .markdown .gpu-a100}
+
 * Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
 * Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
+
+:::
+
+::: {.cell .markdown .gpu-h100}
+
+* Use this link: [Large-scale model training on Chameleon](https://trovi.chameleoncloud.org/dashboard/artifacts/bd06bd6d-d94f-4297-ad5d-c9b7e1f02575) on Trovi
+* Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
+
+:::
+
+::: {.cell .markdown}
 
 Inside the `llm-chi` directory, open the `single` subdirectory. You will see several notebooks - look for the one titled `2_create_server.ipynb`. Open this notebook and continue there.
 

@@ -72,7 +72,7 @@ At the beginning of your lease time, continue with `2_create_server.ipynb`.
 
 Before you begin, open this experiment on Trovi:
 
--   Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
+-   Use this link: [Large-scale model training on Chameleon](https://trovi.chameleoncloud.org/dashboard/artifacts/bd06bd6d-d94f-4297-ad5d-c9b7e1f02575) on Trovi
 -   Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
 
 Inside the `llm-chi` directory, open the `single` subdirectory. You will see several notebooks - look for the one titled `2_create_server.ipynb`. Open this notebook and continue there.
@@ -457,45 +457,1208 @@ For every experiment in this notebook, we will follow the same run loop:
 
 For quick reference, this table summarizes the configuration used in each full fine-tuning experiment.
 
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Experiment                 Model                 bs/acc   precision      optim             act_ckpt   strategy                      max_steps   Notes
-  -------------------------- --------------------- -------- -------------- ----------------- ---------- ----------------------------- ----------- -----------------------------------------
-  Baseline                   `blip2-opt-2.7b`      `64/1`   `32-true`      `adamw`           `False`    `auto`                        `-1`        `lr=5e-6`, `num_train_samples=512`, OOM
-
-  Reduced batch size         `blip2-opt-2.7b`      `16/1`   `32-true`      `adamw`           `False`    `auto`                        `-1`        
-
-  Gradient accumulation      `blip2-opt-2.7b`      `16/4`   `32-true`      `adamw`           `False`    `auto`                        `-1`        
-
-  Grad accum + LR x4 rerun   `blip2-opt-2.7b`      `16/4`   `32-true`      `adamw`           `False`    `auto`                        `-1`        `lr=2e-5`
-
-  Reduced precision          `blip2-opt-2.7b`      `16/4`   `bf16-true`    `adamw`           `False`    `auto`                        `-1`        
-
-  Mixed precision            `blip2-opt-2.7b`      `16/4`   `bf16-mixed`   `adamw`           `False`    `auto`                        `-1`        
-
-  Larger model               `blip2-opt-6.7b`      `32/2`   `bf16-true`    `adamw`           `False`    `auto`                        `-1`        
-
-  Even larger model          `blip2-flan-t5-xxl`   `32/2`   `bf16-true`    `adamw`           `False`    `auto`                        `-1`        OOM
-
-  XXL + smallest batch       `blip2-flan-t5-xxl`   `1/1`    `bf16-true`    `adamw`           `False`    `auto`                        `-1`        OOM
-
-  Optimizer without state    `blip2-flan-t5-xxl`   `32/2`   `bf16-true`    `sgd`             `False`    `auto`                        `-1`        
-
-  8-bit optimizer            `blip2-flan-t5-xxl`   `2/2`    `bf16-true`    `adam_8bit`       `False`    `auto`                        `-1`        
-
-  Activation checkpointing   `blip2-flan-t5-xxl`   `2/2`    `bf16-true`    `adam_8bit`       `True`     `auto`                        `-1`        
-
-  CPU offload (DeepSpeed)    `blip2-flan-t5-xxl`   `32/2`   `bf16-true`    `deepspeed_cpu`   `False`    `deepspeed_stage_2_offload`   `2`         
-  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+```{=html}
+<table>
+```
+```{=html}
+<thead>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<th>
+```
+Experiment
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+Model
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+bs/acc
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+precision
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+optim
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+act_ckpt
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+strategy
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+max_steps
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+Notes
+```{=html}
+</th>
+```
+```{=html}
+</tr>
+```
+```{=html}
+</thead>
+```
+```{=html}
+<tbody>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Baseline
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}64/1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}lr=5e-6`</code>`{=html}, `<code>`{=html}num_train_samples=512`</code>`{=html}, OOM
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Reduced batch size
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}16/1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Gradient accumulation
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}16/4`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Grad accum + LR x4 rerun
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}16/4`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}lr=2e-5`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Reduced precision
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}16/4`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Mixed precision
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-2.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}16/4`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-mixed`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Larger model
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-opt-6.7b`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Even larger model
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+OOM
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+XXL + smallest batch
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}1/1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+OOM
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Optimizer without state
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}sgd`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+8-bit optimizer
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}2/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adam_8bit`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+Activation checkpointing
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}2/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adam_8bit`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}True`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+CPU offload (DeepSpeed)
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}bf16-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}deepspeed_cpu`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}deepspeed_stage_2_offload`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+</tbody>
+```
+```{=html}
+</table>
+```
 And this table summarizes the PEFT experiments.
 
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Experiment   Model                 bs/acc   precision   optim     act_ckpt   strategy   max_steps   Notes
-  ------------ --------------------- -------- ----------- --------- ---------- ---------- ----------- ------------------------------------------------------------------------
-  LoRA         `blip2-flan-t5-xxl`   `32/2`   `32-true`   `adamw`   `False`    `auto`     `-1`        `lr=5e-6`, `num_train_samples=512`, `use_lora=True`, `use_qlora=False`
-
-  QLoRA        `blip2-flan-t5-xxl`   `64/1`   `32-true`   `adamw`   `False`    `auto`     `-1`        `lr=5e-6`, `num_train_samples=512`, `use_lora=False`, `use_qlora=True`
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+```{=html}
+<table>
+```
+```{=html}
+<thead>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<th>
+```
+Experiment
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+Model
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+bs/acc
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+precision
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+optim
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+act_ckpt
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+strategy
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+max_steps
+```{=html}
+</th>
+```
+```{=html}
+<th>
+```
+Notes
+```{=html}
+</th>
+```
+```{=html}
+</tr>
+```
+```{=html}
+</thead>
+```
+```{=html}
+<tbody>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+LoRA
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32/2`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}lr=5e-6`</code>`{=html}, `<code>`{=html}num_train_samples=512`</code>`{=html}, `<code>`{=html}use_lora=True`</code>`{=html}, `<code>`{=html}use_qlora=False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+<tr>
+```
+```{=html}
+<td>
+```
+QLoRA
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}blip2-flan-t5-xxl`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}64/1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}32-true`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}adamw`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}False`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}auto`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}-1`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+<td>
+```
+`<code>`{=html}lr=5e-6`</code>`{=html}, `<code>`{=html}num_train_samples=512`</code>`{=html}, `<code>`{=html}use_lora=False`</code>`{=html}, `<code>`{=html}use_qlora=True`</code>`{=html}
+```{=html}
+</td>
+```
+```{=html}
+</tr>
+```
+```{=html}
+</tbody>
+```
+```{=html}
+</table>
+```
 
 ### Experiment: Baseline
 
@@ -878,115 +2041,63 @@ When you have finished, download this notebook - which includes the output of ea
 
 <small>This material is based upon work supported by the National Science Foundation under Grant No. 2230079.</small>
 
-<small>Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.</small>
-
-# Large-scale model training on Chameleon - multi GPU
+<small>Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.</small># Large-scale model training on Chameleon - multi GPU
 
 In this tutorial, we will practice fine-tuning a large language model. We will try two different strategies that distribute training across multiple GPUs:
 
-* DDP
-* FSDP
+-   DDP
+-   FSDP
 
-To run this experiment, you should have already created an account on Chameleon, and become part of a project. 
+To run this experiment, you should have already created an account on Chameleon, and become part of a project.
 
-
-
-You must also have added your SSH key to the CHI@UC site (to use a 4x A100 GPU) or KVM@TACC site (to use a 4x H100 GPU).
-
-
-
-
-## Experiment topology 
+## Experiment topology
 
 In this experiment, we will deploy a single instance with four GPUs. We have "tuned" this experiment for two specific GPU types:
 
-* 4x A100 with 80 GB VRAM (available on most `gpu_a100_pcie` bare metal instances at CHI@UC)
-* or 4x H100 with 94GB VRAM (available in the `g1.h100.pci.4` flavor at KVM@TACC)
+-   4x A100 with 80 GB VRAM (available on most `gpu_a100_pcie` bare metal instances at CHI@UC)
+-   or 4x H100 with 94GB VRAM (available in the `g1.h100.pci.4` flavor at KVM@TACC)
 
 (Generally, to find a Chameleon node with a specific GPU type, we can use the Chameleon [Hardware Browser](https://chameleoncloud.org/hardware/). )
 
-
-
-
-You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
-
-
-
 You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100](index_a100).
-
-
 
 ## Create a lease
 
-
-
 To use a GPU instance on Chameleon, we must reserve it in advance. GPU instances are much more in-demand than other resource types, and so we typically cannot make a reservation "on the spot" to use one.
 
 We can use the OpenStack graphical user interface, Horizon, to reserve a GPU in advance. To access this interface,
 
-* from the [Chameleon website](https://chameleoncloud.org/hardware/)
-* click "Experiment" > "CHI@UC"
-* log in if prompted to do so
-* check the project drop-down menu near the top left (which shows e.g. "CHI-XXXXXX"), and make sure the correct project is selected.
-
-Reserve a 2 hr 50 minute block on a node with four A100 80GBs GPU: `gpu_a100_pcie`.
-
-* On the left side, click on "Reservations" > "Leases", and then click on "Host Calendar". In the "Node type" drop down menu, change the type to `gpu_a100_pcie` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
-* Once you have identified an available 2 hr 50 minute block in UTC time that works for you in your local time zone, make a note of:
-  * the start and end time of the time you will try to reserve. (Note that if you mouse over an existing reservation, a pop up will show you the exact start and end time of that reservation.)
-  * and the name of the node you want to reserve.
-* Then, on the left side, click on the name of the node you want to reserve:
-  * set the "Name" to `llm_multi_netID`, replacing `netID` with your actual net ID.
-  * set the start date and time in UTC
-  * modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
-  * Click "Next".
-* On the "Hosts" tab, confirm that the node you selected is listed in the "Resource properties" section, and click "Next".
-* Then, click "Create". (We won't include any network resources in this lease.)
-
-Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time, and it will show the name of the physical host that is reserved for you as part of your lease.
-
-
-
-To use a GPU instance on Chameleon, we must reserve it in advance. GPU instances are much more in-demand than other resource types, and so we typically cannot make a reservation "on the spot" to use one.
-
-We can use the OpenStack graphical user interface, Horizon, to reserve a GPU in advance. To access this interface,
-
-* from the [Chameleon website](https://chameleoncloud.org/hardware/)
-* click "Experiment" > "KVM@TACC"
-* log in if prompted to do so
-* check the project drop-down menu near the top left (which shows e.g. "CHI-XXXXXX"), and make sure the correct project is selected.
+-   from the [Chameleon website](https://chameleoncloud.org/hardware/)
+-   click "Experiment" \> "KVM@TACC"
+-   log in if prompted to do so
+-   check the project drop-down menu near the top left (which shows e.g. "CHI-XXXXXX"), and make sure the correct project is selected.
 
 Reserve a 2 hr 50 minute block on a node with four H100 GPUs. This flavor is named `g1.h100.pci.4` on KVM@TACC.
 
-* On the left side, click on "Reservations" > "Leases", and then click on "Flavor Calendar". In the "Node type" drop down menu, change the type to `g1.h100.pci.4` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
-* Once you have identified a 2 hr 50 minute block in UTC time that has GPU availability and works for you in your local time zone, make a note of the start and end time of the time you will try to reserve. (Note that if you mouse over a point on the graph, a pop up will show you the exact time.)
-* Then, on the left side, click on "Leases" again and then "Create Lease":
-  * set the "Name" to `llm_multi_netID`, replacing `netID` with your actual net ID.
-  * set the start date and time in UTC
-  * modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
-  * Click "Next".
-* On the "Flavors" tab,
-  * check the "Reserve Flavors" box
-  * let "Number of Instances for Flavor" be 1
-  * and click "Select" next to `g1.h100.pci.4`
-  * then click "Next".
-* Then, click "Create". (We won't include any network resources in this lease.)
+-   On the left side, click on "Reservations" \> "Leases", and then click on "Flavor Calendar". In the "Node type" drop down menu, change the type to `g1.h100.pci.4` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
+-   Once you have identified a 2 hr 50 minute block in UTC time that has GPU availability and works for you in your local time zone, make a note of the start and end time of the time you will try to reserve. (Note that if you mouse over a point on the graph, a pop up will show you the exact time.)
+-   Then, on the left side, click on "Leases" again and then "Create Lease":
+    -   set the "Name" to `llm_multi_netID`, replacing `netID` with your actual net ID.
+    -   set the start date and time in UTC
+    -   modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
+    -   Click "Next".
+-   On the "Flavors" tab,
+    -   check the "Reserve Flavors" box
+    -   let "Number of Instances for Flavor" be 1
+    -   and click "Select" next to `g1.h100.pci.4`
+    -   then click "Next".
+-   Then, click "Create". (We won't include any network resources in this lease.)
 
 Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time and some more details about the instance "flavor" you have reserved.
 
-
-
 At the beginning of your lease time, continue with `2_create_server.ipynb`.
-
 
 Before you begin, open this experiment on Trovi:
 
-* Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
-* Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
+-   Use this link: [Large-scale model training on Chameleon](https://trovi.chameleoncloud.org/dashboard/artifacts/bd06bd6d-d94f-4297-ad5d-c9b7e1f02575) on Trovi
+-   Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
 
 Inside the `llm-chi` directory, open the `multi` subdirectory. You will see several notebooks - look for the one titled `2_create_server.ipynb`. Open this notebook and continue there.
-
-
 
 ## Bring up a GPU server
 
@@ -996,18 +2107,7 @@ We will execute the cells in this notebook inside the Chameleon Jupyter environm
 
 Run the following cell, and make sure the correct project is selected:
 
-
-```python
-# run in Chameleon Jupyter environment
-from chi import server, context, lease
-import os
-
-context.version = "1.0"
-context.choose_project()
-context.choose_site(default="CHI@UC")
-```
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 from chi import server, context, lease, network
 import chi, os, time
@@ -1017,60 +2117,27 @@ context.choose_project()
 context.choose_site(default="KVM@TACC")
 ```
 
-
 Change the string in the following cell to reflect the name of *your* lease (**with your own net ID**), then run it to get your lease:
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 l = lease.get_lease(f"llm_multi_netID")
 l.show()
 ```
 
-
 The status should show as "ACTIVE" now that we are past the lease start time.
 
+The rest of this notebook sets up the instance and the experiment environment, which cumulatively takes a while - bringing up the instance can take some time, and building the container image can take some time.
 
-
-The rest of this notebook sets up the instance and the experiment environment, which cumulatively takes a while - bringing up the instance can take some time, and building the container image can take some time. 
-
-But, you can be mostly hands-off in this stage. You can save time by clicking on this cell, then selecting Run > Run Selected Cell and All Below from the Jupyter menu.
+But, you can be mostly hands-off in this stage. You can save time by clicking on this cell, then selecting Run \> Run Selected Cell and All Below from the Jupyter menu.
 
 As the notebook executes, monitor its progress to make sure it does not get stuck on any execution error, and also to see what it is doing!
 
-
-
 We will use the lease to bring up a server with the `CC-Ubuntu24.04-CUDA` disk image.
-
-
-
-Bare metal instances can take much longer than VM instances to bring up, and the `gigaio` nodes in particular take even longer - up to 30 minutes. 
-
-So if it takes a while to build the instance, you just need to be patient - as long as it does not show the instance in `ERROR` state, it's working as expected.
-
-
-
-```python
-# run in Chameleon Jupyter environment
-username = os.getenv('USER') # all exp resources will have this suffix
-s = server.Server(
-    f"node-llm-multi-{username}", 
-    reservation_id=l.node_reservations[0]["id"],
-    image_name="CC-Ubuntu24.04-CUDA"
-)
-s.submit(idempotent=True)
-```
-
-
-Note: security groups are not used at Chameleon bare metal sites, so we do not have to configure any security groups on this instance.
-
-
-
 
 The default boot disk for instances at KVM@TACC is a little small for large model training, so we will first create a larger boot volume (200 GiB) from that image, then boot the server from that volume.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 username = os.getenv('USER') # all exp resources will have this suffix
 
@@ -1113,11 +2180,9 @@ os_conn.compute.wait_for_server(server_from_vol)
 s = server.get_server(f"node-llm-multi-{username}")
 ```
 
-
 We need security groups to allow SSH and Jupyter access.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 security_groups = [
   {'name': "allow-ssh", 'port': 22, 'description': "Enable SSH traffic on TCP port 22"},
@@ -1125,7 +2190,7 @@ security_groups = [
 ]
 ```
 
-```python
+``` python
 # run in Chameleon Jupyter environment
 for sg in security_groups:
   secgroup = network.SecurityGroup({
@@ -1139,62 +2204,50 @@ for sg in security_groups:
 print(f"updated security groups: {[sg['name'] for sg in security_groups]}")
 ```
 
-
 Then, we'll associate a floating IP with the instance, so that we can access it over SSH.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.associate_floating_ip()
 ```
 
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.refresh()
 s.check_connectivity()
 ```
 
-
 In the output below, make a note of the floating IP that has been assigned to your instance.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.refresh()
 s.show(type="widget")
 ```
 
-
-
 ## Retrieve code and notebooks on the instance
 
 Now, we can use `python-chi` to execute commands on the instance, to set it up. We'll start by retrieving the code and other materials on the instance.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("git clone https://github.com/teaching-on-testbeds/llm-chi")
 ```
-
-
 
 ## Set up Docker with NVIDIA container toolkit
 
 To use common deep learning frameworks like Tensorflow or PyTorch, we can run containers that have all the prerequisite libraries necessary for these frameworks. Here, we will set up the container framework.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("curl -sSL https://get.docker.com/ | sudo sh")
 s.execute("sudo groupadd -f docker; sudo usermod -aG docker $USER")
 s.execute("docker run hello-world")
 ```
 
-
 We will also install the NVIDIA container toolkit, with which we can access GPUs from inside our containers.
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 # get NVIDIA container toolkit 
 s.execute("curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
@@ -1209,19 +2262,12 @@ s.execute("sudo jq 'if has(\"exec-opts\") then . else . + {\"exec-opts\": [\"nat
 s.execute("sudo systemctl restart docker")
 ```
 
-
-
 In the following cell, we will verify that we can see our NVIDIA GPUs from inside a container, by passing `--gpus all`. (The `-rm` flag says to clean up the container and remove its filesystem when it finishes running.)
 
-
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("docker run --rm --gpus all ubuntu nvidia-smi")
 ```
-
-
-
 
 
 ## Build and start container for "Multiple GPU" section
@@ -1232,45 +2278,35 @@ You may view this Dockerfile in our Github repository: [multi/docker/Dockerfile]
 
 This image starts from the Jupyter Pytorch CUDA12 stack and adds the pieces we need for this lab:
 
-* `nvtop` for NVIDIA GPU monitoring
-* ML Python libraries: notably, Lightning, Transformers and related libraries, and BitsAndBytes
+-   `nvtop` for NVIDIA GPU monitoring
+-   ML Python libraries: notably, Lightning, Transformers and related libraries, and BitsAndBytes
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("docker build -t llm-jupyter:latest ~/llm-chi/multi/docker")
 ```
 
-
-
 and get it running:
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("docker run --rm -d -p 8888:8888 -v /home/cc/llm-chi/multi/workspace:/home/jovyan/work --gpus all --name jupyter llm-jupyter:latest")
 ```
 
-
 To access the Jupyter service, we will need its randomly generated secret token (which secures it from unauthorized access). We'll get this token by running `jupyter server list` inside the `jupyter` container on the `node-llm-<username>` instance:
 
-
-```python
+``` python
 # run in Chameleon Jupyter environment
 s.execute("docker exec jupyter jupyter server list")
 ```
 
-
 Look for a line like
 
-```
-http://localhost:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-```
+    http://localhost:8888/lab?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 Paste this into a browser tab, but in place of `localhost`, substitute the floating IP assigned to your instance, to open the Jupyter notebook interface.
 
 Continue with the notebook located inside that workspace.
-
 
 ## Train a large model on multiple GPUs
 
@@ -1278,37 +2314,30 @@ In this section, we will practice strategies for training a large model using di
 
 After completing this section, we should understand the effect of
 
-* distributed data parallelism
-* and learning-rate scaling with larger world size
+-   distributed data parallelism
+-   and learning-rate scaling with larger world size
 
 on a large model training job.
 
-
-
 Make sure that we can see the GPUs inside the container:
 
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 nvidia-smi
 ```
 
+Throughout these experiments, we will monitor GPU utilization with `nvtop`. Open a terminal in Jupyter (File \> New \> Terminal), then run:
 
-Throughout these experiments, we will monitor GPU utilization with `nvtop`. Open a terminal in Jupyter (File > New > Terminal), then run:
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 nvtop
 ```
 
 Keep this running while training.
 
-
-
 Before running the training script, download and unpack the dataset snapshot that we will use in this lab.
 
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 cd ~/work
 mkdir -p data
@@ -1317,23 +2346,15 @@ mkdir -p data/gourmetgram_caption
 tar -xzf data/gourmetgram_caption.tar.gz -C data/gourmetgram_caption --strip-components=1
 ```
 
-
 The training script now reads the dataset from `./data/gourmetgram_caption`.
-
-
-
 
 ### Experiment 1: Single-GPU baseline on the multi-GPU node
 
 We will start with a baseline for single-GPU performance before turning on distributed training.
 
-
-
-
-
 Set `cfg` in `fine-tune-blip.py` to:
 
-```python
+``` python
 cfg = {
     "model_name": "Salesforce/blip2-opt-2.7b",
     "lr": 2e-5,
@@ -1356,12 +2377,10 @@ cfg = {
 
 Then, run:
 
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 python fine-tune-blip.py
 ```
-
 
 As it runs, note in `nvtop` that only one GPU is used. For GPU 0, GPU utilization is high and memory utilization is also high, while the other GPUs have zero utilization.
 
@@ -1370,8 +2389,6 @@ Also note that in the list of processes, there is a single process running on de
 Take a screenshot of this `nvtop` display while the script is running, for later reference.
 
 When the training run finishes, note the training time and the memory summary printed by the script.
-
-
 
 ### Experiment 2: DDP with same batch settings and scaled LR
 
@@ -1383,22 +2400,18 @@ We scale the learning rate by 4x to keep the update magnitude more comparable.
 
 DDP also allocates gradient communication buckets that are about the same order as total parameter size. Even with `gradient_as_bucket_view=True`, we still see this extra bucket memory, so we use the smaller model here.
 
-
-
 In `cfg`, change:
 
-* `"devices": 1` -> `"devices": 4`
-* `"strategy": "auto"` -> `"strategy": "ddp"`
-* `"lr": 2e-5` -> `"lr": 8e-5`
+-   `"devices": 1` -\> `"devices": 4`
+-   `"strategy": "auto"` -\> `"strategy": "ddp"`
+-   `"lr": 2e-5` -\> `"lr": 8e-5`
 
 Leave all other values the same. Then, run:
 
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 python fine-tune-blip.py
 ```
-
 
 Note that it may take a minute or two for the training job to start.
 
@@ -1410,10 +2423,8 @@ When the training run finishes, note the training time and memory summary printe
 
 Compare this run with Experiment 1:
 
-* per-GPU memory will be larger than in single-GPU. Per-device batch settings are unchanged, but we also have memory overhead for communication buffers and collective buckets.
-* total throughput may or may not improve, because now four GPUs are working, but we also have communication overhead
-
-
+-   per-GPU memory will be larger than in single-GPU. Per-device batch settings are unchanged, but we also have memory overhead for communication buffers and collective buckets.
+-   total throughput may or may not improve, because now four GPUs are working, but we also have communication overhead
 
 ### Experiment 3: FSDP
 
@@ -1421,43 +2432,34 @@ Now we will switch from DDP to FSDP, while keeping the same batch settings and l
 
 FSDP shards model states across GPUs, so it can reduce per-GPU memory pressure.
 
-
-
 In our script, we define a set of layer classes and let Lightning FSDP auto-wrap those layers. Here, "wrap" means replacing each matching layer module with an FSDP-managed version of that module, so its parameters, gradients, and optimizer states can be sharded across GPUs instead of kept as full copies on every GPU.
 
-```python
+``` python
 _blip2_layer_cls = {Blip2EncoderLayer, Blip2QFormerLayer, OPTDecoderLayer}
 ```
 
 and then the strategy passed to the Lightning `Trainer` is:
 
-```python
+``` python
 FSDPStrategy(auto_wrap_policy=_blip2_layer_cls)
 ```
 
-
-
 In `cfg`, change:
 
-* `"strategy": "ddp"` -> `"strategy": "fsdp"`
+-   `"strategy": "ddp"` -\> `"strategy": "fsdp"`
 
 Leave all other values the same as Experiment 2.
 
 Then, run:
 
-
-
-```bash
+``` bash
 # runs in the Jupyter service on node-llm-multi
 python fine-tune-blip.py
 ```
 
-
 As it runs, note in `nvtop` that four GPUs are used, and pay attention to memory usage on each GPU. Compare this run with Experiment 2.
 
 When the training run finishes, note the training time and memory summary printed by the script.
-
-
 
 
 <hr>
