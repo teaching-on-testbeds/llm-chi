@@ -4,8 +4,10 @@ In this tutorial, we practice fine-tuning a large language model. We will use a 
 
 * gradient accumulation
 * reduced precision
+* activation checkpointing
+* CPU offload
 * parameter efficient fine tuning
-* distributed training across multiple GPUs and with CPU offload
+* distributed training across multiple GPUs 
 
 Follow along at [Large-scale model training on Chameleon](https://teaching-on-testbeds.github.io/llm-chi/).
 
