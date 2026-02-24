@@ -1,50 +1,44 @@
-all: index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb 3_multi_gpu_v100.ipynb
+SINGLE_GPU ?= a100
 
-clean: 
-	rm index.md 0_intro.ipynb 1_create_server.ipynb 2_single_gpu_a100.ipynb workspace/2_single_gpu_a100.ipynb 3_multi_gpu_a100.ipynb 3_multi_gpu_v100.ipynb
+INTRO_SRC := snippets/intro.md
+INTRO_NOTEBOOK := 0_intro.ipynb
+SINGLE_INDEX := single/index_$(SINGLE_GPU).md
+MULTI_INDEX := multi/index.md
 
-index.md: snippets/*.md 
-	cat snippets/intro.md \
-		snippets/create_server.md \
-		snippets/single_gpu_a100.md \
-		snippets/multi_gpu_a100.md \
-		snippets/multi_gpu_v100.md \
-		> index.tmp.md
-	grep -v '^:::' index.tmp.md > index.md
-	rm index.tmp.md
-	cat snippets/footer.md >> index.md
+.PHONY: all index single multi a100 h100 clean
 
-0_intro.ipynb: snippets/intro.md
+all: index $(INTRO_NOTEBOOK)
+
+index: index.md
+
+single:
+	$(MAKE) -C single $(SINGLE_GPU)
+
+multi:
+	$(MAKE) -C multi index.md
+
+$(SINGLE_INDEX):
+	$(MAKE) -C single $(SINGLE_GPU)
+
+$(MULTI_INDEX):
+	$(MAKE) -C multi index.md
+
+index.md: $(INTRO_SRC) $(SINGLE_INDEX) $(MULTI_INDEX)
+	cat $(INTRO_SRC) $(SINGLE_INDEX) $(MULTI_INDEX) > index.md
+
+$(INTRO_NOTEBOOK): $(INTRO_SRC) snippets/frontmatter_python.md
 	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
-                -i snippets/frontmatter_python.md snippets/intro.md \
-                -o 0_intro.ipynb  
-	sed -i 's/attachment://g' 0_intro.ipynb
+		-i snippets/frontmatter_python.md $(INTRO_SRC) \
+		-o $(INTRO_NOTEBOOK)
+	sed -i 's/attachment://g' $(INTRO_NOTEBOOK)
 
+a100:
+	$(MAKE) index SINGLE_GPU=a100
 
-1_create_server.ipynb: snippets/create_server.md
-	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
-                -i snippets/frontmatter_python.md snippets/create_server.md \
-                -o 1_create_server.ipynb  
-	sed -i 's/attachment://g' 1_create_server.ipynb
+h100:
+	$(MAKE) index SINGLE_GPU=h100
 
-2_single_gpu_a100.ipynb: snippets/single_gpu_a100.md
-	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
-                -i snippets/frontmatter_python.md snippets/single_gpu_a100.md \
-                -o 2_single_gpu_a100.ipynb  
-	sed -i 's/attachment://g' 2_single_gpu_a100.ipynb
-	cp 2_single_gpu_a100.ipynb workspace/2_single_gpu_a100.ipynb
-	
-3_multi_gpu_a100.ipynb: snippets/multi_gpu_a100.md
-	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
-                -i snippets/frontmatter_python.md snippets/multi_gpu_a100.md \
-                -o 3_multi_gpu_a100.ipynb  
-	sed -i 's/attachment://g' 3_multi_gpu_a100.ipynb
-
-3_multi_gpu_v100.ipynb: snippets/multi_gpu_v100.md
-	pandoc --resource-path=../ --embed-resources --standalone --wrap=none \
-                -i snippets/frontmatter_python.md snippets/multi_gpu_v100.md \
-                -o 3_multi_gpu_v100.ipynb  
-	sed -i 's/attachment://g' 3_multi_gpu_v100.ipynb
-
-
-
+clean:
+	rm -f index.md 0_intro.ipynb
+	$(MAKE) -C single clean
+	$(MAKE) -C multi clean

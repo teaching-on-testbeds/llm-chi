@@ -8,7 +8,7 @@ jupyter:
      language: python
      name: python3
   language_info:
-     codemirror_mode:
+     codemirror_mode: 
         name: ipython
         version: 3
      file_extension: ".py"
