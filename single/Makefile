@@ -33,9 +33,10 @@ $(INDEX_A100_OUT): snippets/intro.md snippets/reserve.md snippets/create_server.
 		snippets/create_server.md \
 		snippets/single_gpu.md \
 		> index.a100.tmp.md
-	GPU=a100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to gfm \
+	GPU=a100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
 		-o index.a100.filtered.md index.a100.tmp.md
 	grep -v '^:::' index.a100.filtered.md > $(INDEX_A100_OUT)
+	python3 ../scripts/strip_raw_html_fences.py $(INDEX_A100_OUT)
 	rm index.a100.tmp.md index.a100.filtered.md
 	cat snippets/footer.md >> $(INDEX_A100_OUT)
 
@@ -45,9 +46,10 @@ $(INDEX_H100_OUT): snippets/intro.md snippets/reserve.md snippets/create_server.
 		snippets/create_server.md \
 		snippets/single_gpu.md \
 		> index.h100.tmp.md
-	GPU=h100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to gfm \
+	GPU=h100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
 		-o index.h100.filtered.md index.h100.tmp.md
 	grep -v '^:::' index.h100.filtered.md > $(INDEX_H100_OUT)
+	python3 ../scripts/strip_raw_html_fences.py $(INDEX_H100_OUT)
 	rm index.h100.tmp.md index.h100.filtered.md
 	cat snippets/footer.md >> $(INDEX_H100_OUT)
 
