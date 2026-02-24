@@ -3,6 +3,8 @@ SINGLE_GPU ?= a100
 INTRO_SRC := snippets/intro.md
 INTRO_NOTEBOOK := 0_intro.ipynb
 SINGLE_INDEX := single/index_$(SINGLE_GPU).md
+INDEX_A100 := index_a100.md
+INDEX_H100 := index_h100.md
 MULTI_INDEX := multi/index.md
 ADVANCE_RESERVE_A100 := advance_reserve_a100.md
 ADVANCE_RESERVE_H100 := advance_reserve_h100.md
@@ -11,7 +13,7 @@ GPU_FILTER := single/filters/gpu_select.lua
 
 .PHONY: all index advance_reserve single multi a100 h100 clean
 
-all: index $(ADVANCE_RESERVE_A100) $(ADVANCE_RESERVE_H100) $(INTRO_NOTEBOOK)
+all: index $(INDEX_A100) $(INDEX_H100) $(ADVANCE_RESERVE_A100) $(ADVANCE_RESERVE_H100) $(INTRO_NOTEBOOK)
 
 index: index.md
 
@@ -23,14 +25,20 @@ single:
 multi:
 	$(MAKE) -C multi index.md
 
-$(SINGLE_INDEX):
-	$(MAKE) -C single $(SINGLE_GPU)
+single/index_%.md:
+	$(MAKE) -C single $*
 
 $(MULTI_INDEX):
 	$(MAKE) -C multi index.md
 
 index.md: $(INTRO_SRC) $(SINGLE_INDEX) $(MULTI_INDEX)
 	cat $(INTRO_SRC) $(SINGLE_INDEX) $(MULTI_INDEX) > index.md
+
+$(INDEX_A100): $(INTRO_SRC) single/index_a100.md $(MULTI_INDEX)
+	cat $(INTRO_SRC) single/index_a100.md $(MULTI_INDEX) > $(INDEX_A100)
+
+$(INDEX_H100): $(INTRO_SRC) single/index_h100.md $(MULTI_INDEX)
+	cat $(INTRO_SRC) single/index_h100.md $(MULTI_INDEX) > $(INDEX_H100)
 
 $(ADVANCE_RESERVE_A100): $(ADVANCE_RESERVE_SRC) $(GPU_FILTER)
 	cat $(ADVANCE_RESERVE_SRC) > advance_reserve.a100.tmp.md
@@ -59,6 +67,6 @@ h100:
 	$(MAKE) index SINGLE_GPU=h100
 
 clean:
-	rm -f index.md advance_reserve.md advance_reserve_a100.md advance_reserve_h100.md 0_intro.ipynb
+	rm -f index.md index_a100.md index_h100.md advance_reserve.md advance_reserve_a100.md advance_reserve_h100.md 0_intro.ipynb
 	$(MAKE) -C single clean
 	$(MAKE) -C multi clean

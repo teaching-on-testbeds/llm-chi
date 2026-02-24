@@ -39,7 +39,7 @@ Reserve a 2 hr 50 minute block on a node with a single A100 80GB GPU. We will us
     -   the start and end time of the time you will try to reserve. (Note that if you mouse over an existing reservation, a pop up will show you the exact start and end time of that reservation.)
     -   and the name of the node you want to reserve.
 -   Then, on the left side, click on the name of the node you want to reserve:
-    -   set the "Name" to `<code>`{=html}llm_single\_`<b>`{=html}netID`</b>`{=html}`</code>`{=html} where in place of `<code>`{=html}`<b>`{=html}netID`</b>`{=html}`</code>`{=html} you substitute your actual net ID.
+    -   set the "Name" to `llm_single_netID`, replacing `netID` with your actual net ID.
     -   set the start date and time in UTC
     -   modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
     -   Click "Next".

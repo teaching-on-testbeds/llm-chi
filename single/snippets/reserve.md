@@ -23,7 +23,7 @@ Reserve a 2 hr 50 minute block on a node with a single A100 80GB GPU. We will us
   * the start and end time of the time you will try to reserve. (Note that if you mouse over an existing reservation, a pop up will show you the exact start and end time of that reservation.)
   * and the name of the node you want to reserve.
 * Then, on the left side, click on the name of the node you want to reserve:
-  * set the "Name" to <code>llm_single_<b>netID</b></code> where in place of <code><b>netID</b></code> you substitute your actual net ID.
+  * set the "Name" to `llm_single_netID`, replacing `netID` with your actual net ID.
   * set the start date and time in UTC
   * modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
   * Click "Next".
@@ -50,7 +50,7 @@ Reserve a 2 hr 50 minute block on a node with a single H100 GPU. This flavor is 
 * On the left side, click on "Reservations" > "Leases", and then click on "Flavor Calendar". In the "Node type" drop down menu, change the type to `g1.h100.pci.1` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
 * Once you have identified a 2 hr 50 minute block in UTC time that has GPU availability and works for you in your local time zone, make a note of the start and end time of the time you will try to reserve. (Note that if you mouse over a point on the graph, a pop up will show you the exact time.)
 * Then, on the left side, click on "Leases" again and then "Create Lease":
-  * set the "Name" to <code>llm_single_<b>netID</b></code> where in place of <code><b>netID</b></code> you substitute your actual net ID.
+  * set the "Name" to `llm_single_netID`, replacing `netID` with your actual net ID.
   * set the start date and time in UTC
   * modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
   * Click "Next".
