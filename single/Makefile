@@ -33,7 +33,7 @@ $(INDEX_A100_OUT): snippets/intro.md snippets/reserve.md snippets/create_server.
 		snippets/create_server.md \
 		snippets/single_gpu.md \
 		> index.a100.tmp.md
-	GPU=a100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
+	GPU=a100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to gfm \
 		-o index.a100.filtered.md index.a100.tmp.md
 	grep -v '^:::' index.a100.filtered.md > $(INDEX_A100_OUT)
 	rm index.a100.tmp.md index.a100.filtered.md
@@ -45,7 +45,7 @@ $(INDEX_H100_OUT): snippets/intro.md snippets/reserve.md snippets/create_server.
 		snippets/create_server.md \
 		snippets/single_gpu.md \
 		> index.h100.tmp.md
-	GPU=h100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
+	GPU=h100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to gfm \
 		-o index.h100.filtered.md index.h100.tmp.md
 	grep -v '^:::' index.h100.filtered.md > $(INDEX_H100_OUT)
 	rm index.h100.tmp.md index.h100.filtered.md
