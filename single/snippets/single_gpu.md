@@ -297,7 +297,7 @@ For quick reference, this table summarizes the configuration used in each full f
     <tr><td>Optimizer without state</td><td>blip2-flan-t5-xxl</td><td>32/2</td><td>bf16-true</td><td>sgd</td><td>False</td><td>auto</td><td>-1</td><td></td></tr>
     <tr><td>8-bit optimizer</td><td>blip2-flan-t5-xxl</td><td>2/2</td><td>bf16-true</td><td>adam_8bit</td><td>False</td><td>auto</td><td>-1</td><td></td></tr>
     <tr><td>Activation checkpointing</td><td>blip2-flan-t5-xxl</td><td>2/2</td><td>bf16-true</td><td>adam_8bit</td><td>True</td><td>auto</td><td>-1</td><td></td></tr>
-    <tr><td>CPU offload (DeepSpeed)</td><td>blip2-flan-t5-xxl</td><td>32/2</td><td>bf16-true</td><td>deepspeed_cpu</td><td>False</td><td>deepspeed_stage_2_offload</td><td>2</td><td></td></tr>
+    <tr><td>CPU offload (DeepSpeed)</td><td>blip2-flan-t5-xxl</td><td>32/2</td><td>bf16-true</td><td>deepspeed_cpu</td><td>False</td><td>deepspeed_stage_2_offload</td><td>2</td><td>set num_workers=0 to reduce host RAM pressure</td></tr>
   </tbody>
 </table>
 
@@ -944,6 +944,7 @@ In `cfg`, change:
 * `"strategy": "deepspeed_stage_2_offload"`
 * `"batch_size": 32`
 * `"accumulate_grad_batches": 2`
+* `"num_workers": 0`
 * `"max_steps": 2`
 
 :::

@@ -252,10 +252,17 @@ Now, we can use `python-chi` to execute commands on the instance, to set it up. 
 
 :::
 
-::: {.cell .code}
+::: {.cell .code .gpu-a100}
 ```python
 # run in Chameleon Jupyter environment
 s.execute("git clone https://github.com/teaching-on-testbeds/llm-chi")
+```
+:::
+
+::: {.cell .code .gpu-h100}
+```python
+# run in Chameleon Jupyter environment
+s.execute("git clone --branch h100 --single-branch https://github.com/teaching-on-testbeds/llm-chi")
 ```
 :::
 
