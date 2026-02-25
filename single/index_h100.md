@@ -139,7 +139,7 @@ except Exception:
         networks=[{"uuid": os_conn.network.find_network("sharednet1").id}],
     )
 
-    os_conn.compute.wait_for_server(server_from_vol)
+    os_conn.compute.wait_for_server(server_from_vol, wait=600)
     s = server.get_server(server_name)
 ```
 
