@@ -98,44 +98,49 @@ The default boot disk for instances at KVM@TACC is a little small for large mode
 ``` python
 # run in Chameleon Jupyter environment
 username = os.getenv('USER') # all exp resources will have this suffix
+server_name = f"node-llm-single-{username}"
 
-os_conn = chi.clients.connection()
-cinder_client = chi.clients.cinder()
+try:
+    s = server.get_server(server_name)
+    print(f"Server {server_name} already exists. Skipping create.")
+except Exception:
+    os_conn = chi.clients.connection()
+    cinder_client = chi.clients.cinder()
 
-images = list(os_conn.image.images(name="CC-Ubuntu24.04-CUDA"))
-image_id = images[0].id
+    images = list(os_conn.image.images(name="CC-Ubuntu24.04-CUDA"))
+    image_id = images[0].id
 
-boot_vol = cinder_client.volumes.create(
-    name=f"boot-vol-llm-single-{username}",
-    size=200,
-    imageRef=image_id,
-)
+    boot_vol = cinder_client.volumes.create(
+        name=f"boot-vol-llm-single-{username}",
+        size=200,
+        imageRef=image_id,
+    )
 
-while True:
-    boot_vol = cinder_client.volumes.get(boot_vol.id)
-    if boot_vol.status == "available":
-        break
-    if boot_vol.status in ["error", "error_restoring", "error_extending"]:
-        raise RuntimeError(f"Boot volume provisioning failed with status {boot_vol.status}")
-    time.sleep(10)
+    while True:
+        boot_vol = cinder_client.volumes.get(boot_vol.id)
+        if boot_vol.status == "available":
+            break
+        if boot_vol.status in ["error", "error_restoring", "error_extending"]:
+            raise RuntimeError(f"Boot volume provisioning failed with status {boot_vol.status}")
+        time.sleep(10)
 
-bdm = [{
-    "boot_index": 0,
-    "uuid": boot_vol.id,
-    "source_type": "volume",
-    "destination_type": "volume",
-    "delete_on_termination": True,
-}]
+    bdm = [{
+        "boot_index": 0,
+        "uuid": boot_vol.id,
+        "source_type": "volume",
+        "destination_type": "volume",
+        "delete_on_termination": True,
+    }]
 
-server_from_vol = os_conn.compute.create_server(
-    name=f"node-llm-single-{username}",
-    flavor_id=server.get_flavor_id(l.get_reserved_flavors()[0].name),
-    block_device_mapping_v2=bdm,
-    networks=[{"uuid": os_conn.network.find_network("sharednet1").id}],
-)
+    server_from_vol = os_conn.compute.create_server(
+        name=server_name,
+        flavor_id=server.get_flavor_id(l.get_reserved_flavors()[0].name),
+        block_device_mapping_v2=bdm,
+        networks=[{"uuid": os_conn.network.find_network("sharednet1").id}],
+    )
 
-os_conn.compute.wait_for_server(server_from_vol)
-s = server.get_server(f"node-llm-single-{username}")
+    os_conn.compute.wait_for_server(server_from_vol)
+    s = server.get_server(server_name)
 ```
 
 We need security groups to allow SSH and Jupyter access.
