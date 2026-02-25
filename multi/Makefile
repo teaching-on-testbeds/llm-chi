@@ -2,20 +2,24 @@ GPU ?= a100
 
 FILTER := ../single/filters/gpu_select.lua
 INDEX_OUT := index.md
+INDEX_A100_OUT := index_a100.md
+INDEX_H100_OUT := index_h100.md
 INTRO_OUT := 0_intro.ipynb
 RESERVE_OUT := 1_reserve.ipynb
 CREATE_OUT := 2_create_server.ipynb
 WORKSPACE_OUT := workspace/3_multi_gpu.ipynb
 
-.PHONY: all a100 h100 clean validate-gpu
+.PHONY: all build a100 h100 clean validate-gpu
 
-all: $(INDEX_OUT) $(INTRO_OUT) $(RESERVE_OUT) $(CREATE_OUT) $(WORKSPACE_OUT)
+all: build
+
+build: validate-gpu $(INDEX_A100_OUT) $(INDEX_H100_OUT) $(INDEX_OUT) $(INTRO_OUT) $(RESERVE_OUT) $(CREATE_OUT) $(WORKSPACE_OUT)
 
 a100:
-	$(MAKE) all GPU=a100
+	$(MAKE) build GPU=a100
 
 h100:
-	$(MAKE) all GPU=h100
+	$(MAKE) build GPU=h100
 
 validate-gpu:
 	@if [ "$(GPU)" != "a100" ] && [ "$(GPU)" != "h100" ]; then \
@@ -23,17 +27,32 @@ validate-gpu:
 		exit 1; \
 	fi
 
-$(INDEX_OUT): snippets/*.md $(FILTER) validate-gpu
+$(INDEX_A100_OUT): snippets/*.md $(FILTER)
 	cat snippets/intro.md \
 		snippets/reserve.md \
 		snippets/create_server.md \
 		snippets/multi_gpu.md \
-		> index.tmp.md
-	GPU=$(GPU) pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
-		-o index.filtered.md index.tmp.md
-	grep -v '^:::' index.filtered.md > $(INDEX_OUT)
-	rm index.tmp.md index.filtered.md
-	cat snippets/footer.md >> $(INDEX_OUT)
+		> index.a100.tmp.md
+	GPU=a100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
+		-o index.a100.filtered.md index.a100.tmp.md
+	grep -v '^:::' index.a100.filtered.md > $(INDEX_A100_OUT)
+	rm index.a100.tmp.md index.a100.filtered.md
+	cat snippets/footer.md >> $(INDEX_A100_OUT)
+
+$(INDEX_H100_OUT): snippets/*.md $(FILTER)
+	cat snippets/intro.md \
+		snippets/reserve.md \
+		snippets/create_server.md \
+		snippets/multi_gpu.md \
+		> index.h100.tmp.md
+	GPU=h100 pandoc --standalone --wrap=none --lua-filter $(FILTER) --from markdown --to markdown \
+		-o index.h100.filtered.md index.h100.tmp.md
+	grep -v '^:::' index.h100.filtered.md > $(INDEX_H100_OUT)
+	rm index.h100.tmp.md index.h100.filtered.md
+	cat snippets/footer.md >> $(INDEX_H100_OUT)
+
+$(INDEX_OUT): $(INDEX_A100_OUT) $(INDEX_H100_OUT)
+	cp index_$(GPU).md $(INDEX_OUT)
 
 $(INTRO_OUT): snippets/frontmatter_python.md snippets/intro.md $(FILTER) validate-gpu
 	GPU=$(GPU) pandoc --resource-path=../ --embed-resources --standalone --wrap=none --lua-filter $(FILTER) \

@@ -209,7 +209,7 @@ Now, we can use `python-chi` to execute commands on the instance, to set it up. 
 
 ``` python
 # run in Chameleon Jupyter environment
-s.execute("git clone https://github.com/teaching-on-testbeds/llm-chi")
+s.execute("git clone --branch h100 --single-branch https://github.com/teaching-on-testbeds/llm-chi")
 ```
 
 ## Set up Docker with NVIDIA container toolkit
@@ -856,6 +856,7 @@ deepspeed_stage_2_offload
 2
 </td>
 <td>
+set num_workers=0 to reduce host RAM pressure
 </td>
 </tr>
 </tbody>
@@ -1229,6 +1230,7 @@ In `cfg`, change:
 -   `"strategy": "deepspeed_stage_2_offload"`
 -   `"batch_size": 32`
 -   `"accumulate_grad_batches": 2`
+-   `"num_workers": 0`
 -   `"max_steps": 2`
 
 This resets us to the "Even larger model" settings and then adds CPU offload. "Stage 2" here refers to ZeRO stage 2 - offloading optimizer state and gradients.
@@ -1527,7 +1529,7 @@ Now, we can use `python-chi` to execute commands on the instance, to set it up. 
 
 ``` python
 # run in Chameleon Jupyter environment
-s.execute("git clone https://github.com/teaching-on-testbeds/llm-chi")
+s.execute("git clone --branch h100 --single-branch https://github.com/teaching-on-testbeds/llm-chi")
 ```
 
 ## Set up Docker with NVIDIA container toolkit

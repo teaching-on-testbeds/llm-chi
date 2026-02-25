@@ -28,6 +28,8 @@ In this tutorial, we will practice fine-tuning a large language model. We will u
 
 To run this experiment, you should have already created an account on Chameleon, and become part of a project.
 
+You must also have added your SSH key to the CHI@UC site (to use an A100 GPU) or KVM@TACC site (to use an H100 GPU).
+
 ## Experiment topology
 
 In this experiment, we will deploy a single instance with a GPU. We have "tuned" this experiment for two specific GPU types:
@@ -37,7 +39,7 @@ In this experiment, we will deploy a single instance with a GPU. We have "tuned"
 
 (Generally, to find a Chameleon node with a specific GPU type, we can use the Chameleon [Hardware Browser](https://chameleoncloud.org/hardware/). )
 
-You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100](index_a100).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 ## Create a lease
 
@@ -46,33 +48,31 @@ To use a GPU instance on Chameleon, we must reserve it in advance. GPU instances
 We can use the OpenStack graphical user interface, Horizon, to reserve a GPU in advance. To access this interface,
 
 -   from the [Chameleon website](https://chameleoncloud.org/hardware/)
--   click "Experiment" \> "KVM@TACC"
+-   click "Experiment" \> "CHI@UC"
 -   log in if prompted to do so
 -   check the project drop-down menu near the top left (which shows e.g. "CHI-XXXXXX"), and make sure the correct project is selected.
 
-Reserve a 2 hr 50 minute block on a node with a single H100 GPU. This flavor is named `g1.h100.pci.1` on KVM@TACC.
+Reserve a 2 hr 50 minute block on a node with a single A100 80GB GPU. We will use `compute_gigaio`.
 
--   On the left side, click on "Reservations" \> "Leases", and then click on "Flavor Calendar". In the "Node type" drop down menu, change the type to `g1.h100.pci.1` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
--   Once you have identified a 2 hr 50 minute block in UTC time that has GPU availability and works for you in your local time zone, make a note of the start and end time of the time you will try to reserve. (Note that if you mouse over a point on the graph, a pop up will show you the exact time.)
--   Then, on the left side, click on "Leases" again and then "Create Lease":
+-   On the left side, click on "Reservations" \> "Leases", and then click on "Host Calendar". In the "Node type" drop down menu, change the type to `compute_gigaio` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
+-   Once you have identified an available 2 hr 50 minute block in UTC time that works for you in your local time zone, make a note of:
+    -   the start and end time of the time you will try to reserve. (Note that if you mouse over an existing reservation, a pop up will show you the exact start and end time of that reservation.)
+    -   and the name of the node you want to reserve.
+-   Then, on the left side, click on the name of the node you want to reserve:
     -   set the "Name" to `llm_single_netID`, replacing `netID` with your actual net ID.
     -   set the start date and time in UTC
     -   modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
     -   Click "Next".
--   On the "Flavors" tab,
-    -   check the "Reserve Flavors" box
-    -   let "Number of Instances for Flavor" be 1
-    -   and click "Select" next to `g1.h100.pci.1`
-    -   then click "Next".
+-   On the "Hosts" tab, confirm that the node you selected is listed in the "Resource properties" section, and click "Next".
 -   Then, click "Create". (We won't include any network resources in this lease.)
 
-Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time and some more details about the instance "flavor" you have reserved.
+Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time, and it will show the name of the physical host that is reserved for you as part of your lease.
 
 At the beginning of your lease time, continue with `2_create_server.ipynb`.
 
 Before you begin, open this experiment on Trovi:
 
--   Use this link: [Large-scale model training on Chameleon](https://trovi.chameleoncloud.org/dashboard/artifacts/bd06bd6d-d94f-4297-ad5d-c9b7e1f02575) on Trovi
+-   Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
 -   Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
 
 Inside the `llm-chi` directory, open the `single` subdirectory. You will see several notebooks - look for the one titled `2_create_server.ipynb`. Open this notebook and continue there.
@@ -87,12 +87,12 @@ Run the following cell, and make sure the correct project is selected:
 
 ``` python
 # run in Chameleon Jupyter environment
-from chi import server, context, lease, network
-import chi, os, time
+from chi import server, context, lease
+import os
 
 context.version = "1.0"
 context.choose_project()
-context.choose_site(default="KVM@TACC")
+context.choose_site(default="CHI@UC")
 ```
 
 Change the string in the following cell to reflect the name of *your* lease (**with your own net ID**), then run it to get your lease:
@@ -113,74 +113,22 @@ As the notebook executes, monitor its progress to make sure it does not get stuc
 
 We will use the lease to bring up a server with the `CC-Ubuntu24.04-CUDA` disk image.
 
-The default boot disk for instances at KVM@TACC is a little small for large model training, so we will first create a larger boot volume (200 GiB) from that image, then boot the server from that volume.
+Bare metal instances can take much longer than VM instances to bring up, and the `gigaio` nodes in particular take even longer - up to 30 minutes.
+
+So if it takes a while to build the instance, you just need to be patient - as long as it does not show the instance in `ERROR` state, it's working as expected.
 
 ``` python
 # run in Chameleon Jupyter environment
 username = os.getenv('USER') # all exp resources will have this suffix
-
-os_conn = chi.clients.connection()
-cinder_client = chi.clients.cinder()
-
-images = list(os_conn.image.images(name="CC-Ubuntu24.04-CUDA"))
-image_id = images[0].id
-
-boot_vol = cinder_client.volumes.create(
-    name=f"boot-vol-llm-single-{username}",
-    size=200,
-    imageRef=image_id,
+s = server.Server(
+    f"node-llm-single-{username}", 
+    reservation_id=l.node_reservations[0]["id"],
+    image_name="CC-Ubuntu24.04-CUDA"
 )
-
-while True:
-    boot_vol = cinder_client.volumes.get(boot_vol.id)
-    if boot_vol.status == "available":
-        break
-    if boot_vol.status in ["error", "error_restoring", "error_extending"]:
-        raise RuntimeError(f"Boot volume provisioning failed with status {boot_vol.status}")
-    time.sleep(10)
-
-bdm = [{
-    "boot_index": 0,
-    "uuid": boot_vol.id,
-    "source_type": "volume",
-    "destination_type": "volume",
-    "delete_on_termination": True,
-}]
-
-server_from_vol = os_conn.compute.create_server(
-    name=f"node-llm-single-{username}",
-    flavor_id=server.get_flavor_id(l.get_reserved_flavors()[0].name),
-    block_device_mapping_v2=bdm,
-    networks=[{"uuid": os_conn.network.find_network("sharednet1").id}],
-)
-
-os_conn.compute.wait_for_server(server_from_vol)
-s = server.get_server(f"node-llm-single-{username}")
+s.submit(idempotent=True)
 ```
 
-We need security groups to allow SSH and Jupyter access.
-
-``` python
-# run in Chameleon Jupyter environment
-security_groups = [
-  {'name': "allow-ssh", 'port': 22, 'description': "Enable SSH traffic on TCP port 22"},
-  {'name': "allow-8888", 'port': 8888, 'description': "Enable TCP port 8888 (used by Jupyter)"}
-]
-```
-
-``` python
-# run in Chameleon Jupyter environment
-for sg in security_groups:
-  secgroup = network.SecurityGroup({
-      'name': sg['name'],
-      'description': sg['description'],
-  })
-  secgroup.add_rule(direction='ingress', protocol='tcp', port=sg['port'])
-  secgroup.submit(idempotent=True)
-  s.add_security_group(sg['name'])
-
-print(f"updated security groups: {[sg['name'] for sg in security_groups]}")
-```
+Note: security groups are not used at Chameleon bare metal sites, so we do not have to configure any security groups on this instance.
 
 Then, we'll associate a floating IP with the instance, so that we can access it over SSH.
 
@@ -498,7 +446,7 @@ Baseline
 blip2-opt-2.7b
 </td>
 <td>
-64/1
+32/1
 </td>
 <td>
 32-true
@@ -516,7 +464,7 @@ auto
 -1
 </td>
 <td>
-lr=5e-6, num_train_samples=512, OOM
+lr=5e-6, num_train_samples=512, expected OOM
 </td>
 </tr>
 <tr>
@@ -668,7 +616,7 @@ Larger model
 blip2-opt-6.7b
 </td>
 <td>
-32/2
+16/4
 </td>
 <td>
 bf16-true
@@ -696,7 +644,7 @@ Even larger model
 blip2-flan-t5-xxl
 </td>
 <td>
-32/2
+16/4
 </td>
 <td>
 bf16-true
@@ -714,7 +662,7 @@ auto
 -1
 </td>
 <td>
-OOM
+expected OOM
 </td>
 </tr>
 <tr>
@@ -743,7 +691,7 @@ auto
 -1
 </td>
 <td>
-OOM
+expected OOM
 </td>
 </tr>
 <tr>
@@ -754,7 +702,7 @@ Optimizer without state
 blip2-flan-t5-xxl
 </td>
 <td>
-32/2
+16/4
 </td>
 <td>
 bf16-true
@@ -838,7 +786,7 @@ CPU offload (DeepSpeed)
 blip2-flan-t5-xxl
 </td>
 <td>
-32/2
+16/4
 </td>
 <td>
 bf16-true
@@ -966,7 +914,7 @@ Set `cfg` in `fine-tune-blip.py` to this baseline:
 cfg = {
     "model_name": "Salesforce/blip2-opt-2.7b",
     "lr": 5e-6,
-    "batch_size": 64,
+    "batch_size": 32,
     "accumulate_grad_batches": 1,
     "precision": "32-true",
     "optim": "adamw",
@@ -1004,7 +952,7 @@ What if we reduce the batch size?
 
 In `cfg`, change:
 
--   `"batch_size": 64` -\> `"batch_size": 16`
+-   `"batch_size": 32` -\> `"batch_size": 16`
 
 Leave all other values the same as the baseline.
 
@@ -1098,8 +1046,8 @@ We've gained so much GPU memory back with these techniques, we can even train a 
 In `cfg`, change:
 
 -   `"model_name": "Salesforce/blip2-opt-2.7b"` -\> `"Salesforce/blip2-opt-6.7b"`
--   `"batch_size": 16` -\> `"batch_size": 32`
--   `"accumulate_grad_batches": 4` -\> `"accumulate_grad_batches": 2`
+-   `"batch_size": 16` (keep at 16)
+-   `"accumulate_grad_batches": 4` (keep at 4)
 -   `"precision": "bf16-mixed"` -\> `"bf16-true"`
 
 Leave all other values the same as the previous experiment.
@@ -1138,8 +1086,8 @@ Even if we reduce to the smallest possible batch size, the `flan-t5-xxl` model i
 
 In `cfg`, change:
 
--   `"batch_size": 32` -\> `"batch_size": 1`
--   `"accumulate_grad_batches": 2` -\> `"accumulate_grad_batches": 1`
+-   `"batch_size": 16` -\> `"batch_size": 1`
+-   `"accumulate_grad_batches": 4` -\> `"accumulate_grad_batches": 1`
 
 Leave all other values the same as the previous experiment.
 
@@ -1158,8 +1106,8 @@ The previous XXL runs fail partly because optimizer state takes a lot of memory.
 
 In `cfg`, change:
 
--   `"batch_size": 1` -\> `"batch_size": 32`
--   `"accumulate_grad_batches": 1` -\> `"accumulate_grad_batches": 2`
+-   `"batch_size": 1` -\> `"batch_size": 16`
+-   `"accumulate_grad_batches": 1` -\> `"accumulate_grad_batches": 4`
 -   `"optim": "adamw"` -\> `"optim": "sgd"`
 
 Leave all other values the same as the previous experiment.
@@ -1182,7 +1130,8 @@ Another option is 8-bit Adam, which keeps optimizer state in reduced precision.
 In `cfg`, change:
 
 -   `"optim": "sgd"` -\> `"optim": "adam_8bit"`
--   `"batch_size": 32` -\> `"batch_size": 2`
+-   `"batch_size": 16` -\> `"batch_size": 2`
+-   `"accumulate_grad_batches": 4` -\> `"accumulate_grad_batches": 2`
 
 Keep all other values the same as the previous experiment.
 
@@ -1227,8 +1176,8 @@ In `cfg`, change:
 -   `"optim": "deepspeed_cpu"`
 -   `"act_ckpt": False`
 -   `"strategy": "deepspeed_stage_2_offload"`
--   `"batch_size": 32`
--   `"accumulate_grad_batches": 2`
+-   `"batch_size": 16`
+-   `"accumulate_grad_batches": 4`
 -   `"max_steps": 2`
 
 This resets us to the "Even larger model" settings and then adds CPU offload. "Stage 2" here refers to ZeRO stage 2 - offloading optimizer state and gradients.
@@ -1346,6 +1295,8 @@ In this tutorial, we will practice fine-tuning a large language model. We will t
 
 To run this experiment, you should have already created an account on Chameleon, and become part of a project.
 
+You must also have added your SSH key to the CHI@UC site (to use a 4x A100 GPU) or KVM@TACC site (to use a 4x H100 GPU).
+
 ## Experiment topology
 
 In this experiment, we will deploy a single instance with four GPUs. We have "tuned" this experiment for two specific GPU types:
@@ -1355,7 +1306,7 @@ In this experiment, we will deploy a single instance with four GPUs. We have "tu
 
 (Generally, to find a Chameleon node with a specific GPU type, we can use the Chameleon [Hardware Browser](https://chameleoncloud.org/hardware/). )
 
-You are currently viewing the H100 version of the instructions, but A100 instructions are also available at [index_a100](index_a100).
+You are currently viewing the A100 version of the instructions, but H100 instructions are also available at [index_h100](index_h100).
 
 ## Create a lease
 
@@ -1364,33 +1315,31 @@ To use a GPU instance on Chameleon, we must reserve it in advance. GPU instances
 We can use the OpenStack graphical user interface, Horizon, to reserve a GPU in advance. To access this interface,
 
 -   from the [Chameleon website](https://chameleoncloud.org/hardware/)
--   click "Experiment" \> "KVM@TACC"
+-   click "Experiment" \> "CHI@UC"
 -   log in if prompted to do so
 -   check the project drop-down menu near the top left (which shows e.g. "CHI-XXXXXX"), and make sure the correct project is selected.
 
-Reserve a 2 hr 50 minute block on a node with four H100 GPUs. This flavor is named `g1.h100.pci.4` on KVM@TACC.
+Reserve a 2 hr 50 minute block on a node with four A100 80GBs GPU: `gpu_a100_pcie`.
 
--   On the left side, click on "Reservations" \> "Leases", and then click on "Flavor Calendar". In the "Node type" drop down menu, change the type to `g1.h100.pci.4` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
--   Once you have identified a 2 hr 50 minute block in UTC time that has GPU availability and works for you in your local time zone, make a note of the start and end time of the time you will try to reserve. (Note that if you mouse over a point on the graph, a pop up will show you the exact time.)
--   Then, on the left side, click on "Leases" again and then "Create Lease":
+-   On the left side, click on "Reservations" \> "Leases", and then click on "Host Calendar". In the "Node type" drop down menu, change the type to `gpu_a100_pcie` to see the schedule of availability. You may change the date range setting to "30 days" to see a longer time scale. Note that the dates and times in this display are in UTC, so you will need to convert to your local time zone.
+-   Once you have identified an available 2 hr 50 minute block in UTC time that works for you in your local time zone, make a note of:
+    -   the start and end time of the time you will try to reserve. (Note that if you mouse over an existing reservation, a pop up will show you the exact start and end time of that reservation.)
+    -   and the name of the node you want to reserve.
+-   Then, on the left side, click on the name of the node you want to reserve:
     -   set the "Name" to `llm_multi_netID`, replacing `netID` with your actual net ID.
     -   set the start date and time in UTC
     -   modify the lease length (in days) until the end date is correct. Then, set the end time. To be mindful of other users, you should limit your lease time as directed.
     -   Click "Next".
--   On the "Flavors" tab,
-    -   check the "Reserve Flavors" box
-    -   let "Number of Instances for Flavor" be 1
-    -   and click "Select" next to `g1.h100.pci.4`
-    -   then click "Next".
+-   On the "Hosts" tab, confirm that the node you selected is listed in the "Resource properties" section, and click "Next".
 -   Then, click "Create". (We won't include any network resources in this lease.)
 
-Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time and some more details about the instance "flavor" you have reserved.
+Your lease status should show as "Pending". If you click on the lease, you can see an overview, including the start time and end time, and it will show the name of the physical host that is reserved for you as part of your lease.
 
 At the beginning of your lease time, continue with `2_create_server.ipynb`.
 
 Before you begin, open this experiment on Trovi:
 
--   Use this link: [Large-scale model training on Chameleon](https://trovi.chameleoncloud.org/dashboard/artifacts/bd06bd6d-d94f-4297-ad5d-c9b7e1f02575) on Trovi
+-   Use this link: [Large-scale model training on Chameleon](https://chameleoncloud.org/experiment/share/39a536c6-6070-4ccf-9e91-bc47be9a94af) on Trovi
 -   Then, click "Launch on Chameleon". This will start a new Jupyter server for you, with the experiment materials already in it.
 
 Inside the `llm-chi` directory, open the `multi` subdirectory. You will see several notebooks - look for the one titled `2_create_server.ipynb`. Open this notebook and continue there.
@@ -1405,12 +1354,12 @@ Run the following cell, and make sure the correct project is selected:
 
 ``` python
 # run in Chameleon Jupyter environment
-from chi import server, context, lease, network
-import chi, os, time
+from chi import server, context, lease
+import os
 
 context.version = "1.0"
 context.choose_project()
-context.choose_site(default="KVM@TACC")
+context.choose_site(default="CHI@UC")
 ```
 
 Change the string in the following cell to reflect the name of *your* lease (**with your own net ID**), then run it to get your lease:
@@ -1431,74 +1380,22 @@ As the notebook executes, monitor its progress to make sure it does not get stuc
 
 We will use the lease to bring up a server with the `CC-Ubuntu24.04-CUDA` disk image.
 
-The default boot disk for instances at KVM@TACC is a little small for large model training, so we will first create a larger boot volume (200 GiB) from that image, then boot the server from that volume.
+Bare metal instances can take much longer than VM instances to bring up, and the `gigaio` nodes in particular take even longer - up to 30 minutes.
+
+So if it takes a while to build the instance, you just need to be patient - as long as it does not show the instance in `ERROR` state, it's working as expected.
 
 ``` python
 # run in Chameleon Jupyter environment
 username = os.getenv('USER') # all exp resources will have this suffix
-
-os_conn = chi.clients.connection()
-cinder_client = chi.clients.cinder()
-
-images = list(os_conn.image.images(name="CC-Ubuntu24.04-CUDA"))
-image_id = images[0].id
-
-boot_vol = cinder_client.volumes.create(
-    name=f"boot-vol-llm-multi-{username}",
-    size=200,
-    imageRef=image_id,
+s = server.Server(
+    f"node-llm-multi-{username}", 
+    reservation_id=l.node_reservations[0]["id"],
+    image_name="CC-Ubuntu24.04-CUDA"
 )
-
-while True:
-    boot_vol = cinder_client.volumes.get(boot_vol.id)
-    if boot_vol.status == "available":
-        break
-    if boot_vol.status in ["error", "error_restoring", "error_extending"]:
-        raise RuntimeError(f"Boot volume provisioning failed with status {boot_vol.status}")
-    time.sleep(10)
-
-bdm = [{
-    "boot_index": 0,
-    "uuid": boot_vol.id,
-    "source_type": "volume",
-    "destination_type": "volume",
-    "delete_on_termination": True,
-}]
-
-server_from_vol = os_conn.compute.create_server(
-    name=f"node-llm-multi-{username}",
-    flavor_id=server.get_flavor_id(l.get_reserved_flavors()[0].name),
-    block_device_mapping_v2=bdm,
-    networks=[{"uuid": os_conn.network.find_network("sharednet1").id}],
-)
-
-os_conn.compute.wait_for_server(server_from_vol)
-s = server.get_server(f"node-llm-multi-{username}")
+s.submit(idempotent=True)
 ```
 
-We need security groups to allow SSH and Jupyter access.
-
-``` python
-# run in Chameleon Jupyter environment
-security_groups = [
-  {'name': "allow-ssh", 'port': 22, 'description': "Enable SSH traffic on TCP port 22"},
-  {'name': "allow-8888", 'port': 8888, 'description': "Enable TCP port 8888 (used by Jupyter)"}
-]
-```
-
-``` python
-# run in Chameleon Jupyter environment
-for sg in security_groups:
-  secgroup = network.SecurityGroup({
-      'name': sg['name'],
-      'description': sg['description'],
-  })
-  secgroup.add_rule(direction='ingress', protocol='tcp', port=sg['port'])
-  secgroup.submit(idempotent=True)
-  s.add_security_group(sg['name'])
-
-print(f"updated security groups: {[sg['name'] for sg in security_groups]}")
-```
+Note: security groups are not used at Chameleon bare metal sites, so we do not have to configure any security groups on this instance.
 
 Then, we'll associate a floating IP with the instance, so that we can access it over SSH.
 
