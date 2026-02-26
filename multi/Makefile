@@ -72,9 +72,9 @@ $(CREATE_OUT): snippets/frontmatter_python.md snippets/create_server.md $(FILTER
 		-o $(CREATE_OUT)
 	sed -i 's/attachment://g' $(CREATE_OUT)
 
-$(WORKSPACE_OUT): snippets/frontmatter_python.md snippets/multi_gpu.md $(FILTER) validate-gpu
+$(WORKSPACE_OUT): snippets/frontmatter_bash.md snippets/multi_gpu.md $(FILTER) validate-gpu
 	GPU=$(GPU) pandoc --resource-path=../ --embed-resources --standalone --wrap=none --lua-filter $(FILTER) \
-		-i snippets/frontmatter_python.md snippets/multi_gpu.md \
+		-i snippets/frontmatter_bash.md snippets/multi_gpu.md \
 		-o $(WORKSPACE_OUT)
 	sed -i 's/attachment://g' $(WORKSPACE_OUT)
 
